@@ -1,0 +1,16 @@
+# 공통 분석 설정. null 은 아직 결정되지 않은 항목 (docs/decisions.md 참고)
+sample:
+  start: 2025-10-01
+  end: null            # TODO: 실제 보유 데이터 최종 거래일로 확정
+
+rv:
+  bar_minutes: 5
+  price_venue: KRX     # 가격·RV 는 KRX, 거래량은 ALL(KRX+NXT)
+  volume_venue: ALL
+  session: regular     # 09:00~15:19 연속매매
+  include_closing_auction: null   # TODO: 15:30 종가 단일가 포함 여부 결정 + 민감도 분석
+  exclude_overnight: true
+  dependent_variable: null        # TODO: RV / sqrt(RV) / log(RV) — RQ별 명시
+
+split:
+  shuffle: false       # 시계열은 날짜순 분할만 허용

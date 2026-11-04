@@ -1,0 +1,52 @@
+# ---- 비밀정보 ----
+.env
+.env.*
+!.env.example
+*token*.json
+*credential*
+*.pem
+*.key
+
+# ---- 데이터 (원자료·중간산출물은 Git 제외) ----
+data/raw/
+data/interim/
+data/processed/
+data/external/
+*.parquet
+*.feather
+*.db
+*.sqlite
+*.h5
+*.csv.gz
+*.zip
+# 원자료 응답·로그
+logs/
+*.log
+
+# ---- 결과물 중 대용량 ----
+results/**/*.pkl
+results/**/*.joblib
+results/**/*.pt
+results/**/*.ckpt
+models/
+checkpoints/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ---- OS / 에디터 ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/settings.local.json

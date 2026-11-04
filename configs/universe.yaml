@@ -1,0 +1,57 @@
+# 종목 universe. 출처: docs/source/DATA_SPEC.md 2절 (2026-10-23 기준)
+# 코드는 KRX 단축코드 문자열. FnGuide 코드 매핑(A/Q 접두사)은 별도 확인.
+underlying:            # U1
+  - "005930"   # 삼성전자
+  - "000660"   # SK하이닉스
+  - "005935"   # 삼성전자우 (대조군)
+
+single_stock_leveraged: []   # U2: ETF 16 + ETN 2 — TODO: RESEARCH_DATA_CHECK.md 3절에서 코드 이관
+
+kospi200:              # U3 / U3x
+  constituents_file: null    # TODO: kospi200_constituents_20261023.json 위치 확인
+  removed:             # U3x — KRX 공지로 재확인 필요
+    - "012630"
+    - "489790"
+    - "145720"
+    - "039130"
+    - "003620"
+    - "002710"
+    - "006360"
+    - "004490"
+    - "114090"
+    - "005250"
+
+indices:               # U4
+  "001": KOSPI
+  "201": KOSPI200
+  "013": 전기/전자
+  "101": KOSDAQ
+
+alt_leveraged:         # U5
+  - "122630"
+  - "252400"
+  - "253150"
+  - "267770"
+  - "233740"
+  - "233160"
+  - "494310"
+  - "409820"
+  - "418660"
+  - "423920"
+
+alt_inverse:           # U5i
+  - "114800"
+  - "252670"
+  - "251340"
+  - "409810"
+  - "520099"
+
+us:                    # U6
+  - TQQQ
+  - SOXL
+  - NVDL
+  - TSLL
+  - SOXX
+  - SPY
+  - MU
+  - TSM

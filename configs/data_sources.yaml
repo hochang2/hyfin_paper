@@ -1,0 +1,14 @@
+# 데이터 출처. status: planned | verified_available | downloaded | validated | missing
+sources:
+  kiwoom_minute:
+    provider: 키움 OpenAPI (ka10080, ka20005, usa06011)
+    frequency: [1min, 5min]
+    status: null       # TODO: 로컬 파일 검사 후 기록
+  kiwoom_daily:
+    provider: 키움 OpenAPI (ka10081, ka10059, ka40003, ka40009 등)
+    frequency: daily
+    status: planned
+  fnguide:
+    provider: FnGuide DataGuide
+    frequency: daily
+    status: verified_available   # 조회 가능 여부만 확인, 다운로드 전

@@ -1,0 +1,15 @@
+# 사건일. status: verified | unverified
+# 공식 원문(금융위·거래소)으로 확인하기 전까지 unverified 유지.
+events:
+  - id: listing
+    date: 2026-05-27
+    description: 단일종목 레버리지·인버스 ETF 16종, ETN 2종 상장
+    status: unverified
+  - id: regulation_announce
+    date: 2026-07-16
+    description: 개인투자자 접근 규제 발표
+    status: unverified
+  - id: regulation_effective
+    date: null   # TODO: 2026-07-31 또는 2026-08-05 — 문서 간 불일치, 공식 원문 확인
+    description: 규제 실제 시행
+    status: unverified
