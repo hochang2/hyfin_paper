@@ -1,4 +1,4 @@
-# 종목 universe. 출처: docs/source/DATA_SPEC.md 2절 (2026-10-23 기준)
+# 종목 universe. 출처: 2026-10-23 DATA_SPEC.md 2절. 실제 보유 목록은 docs/data_spec.md (F2, M1~M7)
 # 코드는 KRX 단축코드 문자열. FnGuide 코드 매핑(A/Q 접두사)은 별도 확인.
 underlying:            # U1
   - "005930"   # 삼성전자

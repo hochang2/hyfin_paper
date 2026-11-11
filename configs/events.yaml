@@ -13,3 +13,11 @@ events:
     date: null   # TODO: 2026-07-31 또는 2026-08-05 — 문서 간 불일치, 공식 원문 확인
     description: 규제 실제 시행
     status: unverified
+
+# 기간형 제도 (proc.calendar 의 더미). 날짜는 공식 원문 확인 전.
+regimes:
+  - id: short_sale_ban
+    start: 2023-11-06   # 공매도 전면 금지 시작
+    end: 2025-03-28     # 마지막 금지 거래일 (2025-03-31 재개)
+    description: 공매도 전면 금지 (data_spec.md 주의 #8)
+    status: unverified

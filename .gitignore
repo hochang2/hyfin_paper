@@ -1,7 +1,6 @@
 # ---- 비밀정보 ----
 .env
 .env.*
-!.env.example
 *token*.json
 *credential*
 *.pem
@@ -23,11 +22,11 @@ data/external/
 logs/
 *.log
 
-# ---- 결과물 중 대용량 ----
-results/**/*.pkl
-results/**/*.joblib
-results/**/*.pt
-results/**/*.ckpt
+# ---- 결과물 중 대용량 (그림·표는 커밋, 모형 파일은 제외) ----
+src/**/results/**/*.pkl
+src/**/results/**/*.joblib
+src/**/results/**/*.pt
+src/**/results/**/*.ckpt
 models/
 checkpoints/
 

@@ -3,11 +3,12 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "leverage-study"
+name = "hyfin-paper"
 version = "0.0.1"
 description = "단일종목 레버리지 ETF·ETN 도입·규제의 변동성·수요 효과 연구"
 requires-python = ">=3.11"
 dependencies = [
+    "duckdb==1.5.6",   # MotherDuck 이 2.0 미지원
     "numpy",
     "pandas",
     "pyarrow",
@@ -16,9 +17,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
+scripts = ["openpyxl"]   # scripts/convert_fnguide_f1_f6.py
 
+# `src` 자체를 패키지로 설치 → 어디서든 `from src.common import ...`
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["src*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["src"]   # 테스트는 각 폴더 안 test_*.py
