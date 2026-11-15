@@ -1,0 +1,54 @@
+# RQ2 실험 설정 (연구자 A). 코드: src/rq2/. 값이 바뀌면 실험 로그에 그대로 남는다.
+# 사건일 근거는 아래 timeline. configs/events.yaml 은 공통 설정이라 건드리지 않았다 (PROJECT_CONTEXT 9절).
+
+seed: 20261115
+
+# 2026-11-15 확인한 규제 타임라인 (금융위 보도자료 2026-07-24 fsc.go.kr/no010101/87403 + 언론 보도)
+timeline:
+  listing: 2026-05-27            # 단일종목 레버리지 ETF 16 + ETN 2 상장
+  announce: 2026-07-16           # 보완방안 발표. 즉시: 신규상장 중단, 광고 금지
+  early_effective_notice: 2026-07-24   # 금융위: 기본예탁금 강화를 7/31로 앞당긴다고 발표
+  circuit_breaker: 2026-07-28    # 유가증권시장 서킷브레이커 + 위원장 추가조치 시사
+  effective: 2026-07-31          # 기본예탁금 현금 3,000만원 시행 (국내·해외상장 단일종목 레버리지)
+  original_effective: 2026-08-05 # 7/16 발표 당시 예정일 ("8월 5일경")
+  additional_measures: 2026-08-03 # 투자한도·모의거래 등 추가조치 방향 발표 (시행일 미정)
+  premium_rule: 2026-08-19       # 괴리율 관리 강화 시행
+
+sample:
+  start: 2025-10-01   # 분봉 RV 시작
+  end: 2026-10-30
+  train_end: 2026-07-15   # 발표 전날까지만 학습 (사후 정보 차단)
+
+treated: ["005930", "000660"]
+within_firm_control: "005935"   # 삼성전자우: 같은 기업, 단일종목 레버리지 상품 없음
+
+# donor pool: 규제 파급 경로(반도체 업황, 삼성·SK 지분 연결, 계열 수급)가 있는 종목은 기본에서 뺀다
+donor_exclude:
+  semis_related: ["000990", "042700", "007660", "011070", "009150", "014680", "034220", "093370", "011790"]
+  samsung_group: ["006400", "009150", "000810", "010140", "016360", "018260", "028050", "028260", "029780",
+                  "030000", "032830", "012750", "207940", "0126Z0", "008770"]
+  sk_group: ["034730", "402340", "017670", "096770", "011790", "285130", "302440", "326030", "361610"]
+  late_or_incomplete: ["0126Z0", "0220W0"]   # 상장이 늦거나 결측. 추가로 n_days<261 은 코드에서 제외
+
+controls:
+  # 이름 -> 설명. 기본 세트(C_main)는 규제에 직접 노출되지 않았다고 볼 근거가 있는 것만
+  C0: []
+  C1: [don_mean]
+  C2: [don_mean, kosdaq_lrv]
+  C_main: [don_mean, don_pc2, don_pc3, kosdaq_lrv, us_lvix, us_abs_sox, gap_day]
+  C_us_only: [us_lvix, us_abs_sox, us_abs_ndx]
+  C_contaminated: [don_mean, kosdaq_lrv, us_lvix, us_abs_sox, gap_day, kospi_lrv, lvkospi]   # 삼성·SK가 들어간 지수 포함 (오염 확인용)
+
+bsts:
+  niter: 4000
+  burn: 1000
+  expected_model_size: 3
+  prior_level_sd: 0.01      # CausalImpact 기본값 (표준화된 y 기준)
+  prior_level_df: 32
+  hac_lags: 5
+
+placebo:
+  in_time_start: 2026-01-15     # 분봉 사전구간 안 가짜 개입일 (학습 >= 60일 확보)
+  in_time_end: 2026-04-10       # 가짜 사후 30일이 상장 전에 끝나도록
+  in_time_step: 5
+  in_time_horizon: 30
