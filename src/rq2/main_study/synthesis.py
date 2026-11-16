@@ -1,6 +1,6 @@
 """RQ2 종합 표: 결과 csv 들을 모아 보고서용 표를 만든다 (재추정 없음).
 
-py -m src.rq2.synthesis  →  results/tables/rq2_synthesis_*.csv + 콘솔 요약
+py -m src.rq2.main_study.synthesis  →  results/tables/rq2_synthesis_*.csv + 콘솔 요약
 
 - rq2_synthesis_main.csv : 설계별 핵심 효과, 모형 구간, 보정된(placebo) p, 최소검출효과(MDE)
   MDE(80% 검정력, 양측 5%) ≈ 2.8 × (귀무 분포의 표준편차). 귀무 분포 = placebo 효과 분포.

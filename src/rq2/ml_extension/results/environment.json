@@ -1,0 +1,18 @@
+{
+ "python": "3.13.5",
+ "platform": "Windows-11-10.0.26200-SP0",
+ "seed": 20261116,
+ "n_jobs": 11,
+ "cpu": 12,
+ "numpy": "2.4.1",
+ "pandas": "2.2.3",
+ "scipy": "1.17.0",
+ "statsmodels": "0.14.6",
+ "sklearn": "1.8.0",
+ "lightgbm": "4.6.0",
+ "xgboost": "3.3.0",
+ "optuna": "4.9.0",
+ "shap": "0.52.0",
+ "joblib": "1.5.3",
+ "fm_env": "2.15.0+cpu 3.13.5"
+}

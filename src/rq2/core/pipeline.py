@@ -10,8 +10,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.rq2 import models as M
-from src.rq2.data import build_controls, build_design, donor_codes, load_cfg, load_panel
+from src.rq2.core import models as M
+from src.rq2.core.data import build_controls, build_design, donor_codes, load_cfg, load_panel
 
 CFG = load_cfg()
 TL = CFG["timeline"]

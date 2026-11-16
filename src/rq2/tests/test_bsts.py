@@ -1,7 +1,7 @@
 """BSTS 구현 점검: 알려진 효과를 넣은 모의자료에서 효과를 되찾는지, 효과 0 일 때 구간이 0을 포함하는지."""
 import numpy as np
 
-from src.rq2.bsts import fit_bsts
+from src.rq2.core.bsts import fit_bsts
 
 
 def _sim(effect, seed, T0=180, T1=60, k=6):
@@ -47,7 +47,7 @@ def test_constant_column():
 def test_no_regressors():
     """회귀변수 0개(C0, local level 만)도 돌아가야 한다."""
     import numpy as np
-    from src.rq2.bsts import fit_bsts
+    from src.rq2.core.bsts import fit_bsts
     rng = np.random.default_rng(1)
     y = np.cumsum(rng.normal(0, 0.05, 120)) + rng.normal(0, 0.3, 120)
     r = fit_bsts(y, np.empty((120, 0)), np.empty((20, 0)), niter=300, burn=100, seed=0)

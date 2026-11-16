@@ -1,0 +1,216 @@
+{
+ "rule": {
+  "dataset": "rv5",
+  "window": "h30",
+  "max_calibrated_fpr": 0.1,
+  "criterion": "min_calibrated_mde",
+  "codes": [
+   "005930",
+   "000660"
+  ],
+  "fallback_windows": [
+   "h20",
+   "h10",
+   "h5"
+  ]
+ },
+ "window_used": "h10",
+ "fallback_used": true,
+ "windows_tried": [
+  {
+   "window": "h30",
+   "min_testable_share": 0.0
+  },
+  {
+   "window": "h20",
+   "min_testable_share": 0.8888888888888888
+  },
+  {
+   "window": "h10",
+   "min_testable_share": 1.0
+  }
+ ],
+ "selected": "harx",
+ "candidates": [
+  {
+   "model": "harx",
+   "time_fpr": 0.0323,
+   "mde_log": 0.5679,
+   "testable": 1.0
+  },
+  {
+   "model": "ols",
+   "time_fpr": 0.0806,
+   "mde_log": 0.5747,
+   "testable": 1.0
+  },
+  {
+   "model": "timesfm_xreg",
+   "time_fpr": 0.0806,
+   "mde_log": 0.5772,
+   "testable": 1.0
+  },
+  {
+   "model": "did_gap",
+   "time_fpr": 0.0806,
+   "mde_log": 0.5798,
+   "testable": 1.0
+  },
+  {
+   "model": "bsts",
+   "time_fpr": 0.0968,
+   "mde_log": 0.5857,
+   "testable": 1.0
+  },
+  {
+   "model": "ens_equal",
+   "time_fpr": 0.0484,
+   "mde_log": 0.5962,
+   "testable": 1.0
+  },
+  {
+   "model": "ens_invmse",
+   "time_fpr": 0.0484,
+   "mde_log": 0.5977,
+   "testable": 1.0
+  },
+  {
+   "model": "ens_stack",
+   "time_fpr": 0.0645,
+   "mde_log": 0.5996,
+   "testable": 1.0
+  },
+  {
+   "model": "ens_hybrid",
+   "time_fpr": 0.0323,
+   "mde_log": 0.601,
+   "testable": 1.0
+  },
+  {
+   "model": "ridge",
+   "time_fpr": 0.0968,
+   "mde_log": 0.6013,
+   "testable": 1.0
+  },
+  {
+   "model": "enet",
+   "time_fpr": 0.0806,
+   "mde_log": 0.6159,
+   "testable": 1.0
+  },
+  {
+   "model": "enet_tA",
+   "time_fpr": 0.0645,
+   "mde_log": 0.6203,
+   "testable": 1.0
+  },
+  {
+   "model": "sarimax",
+   "time_fpr": 0.1129,
+   "mde_log": 0.6345,
+   "testable": 1.0
+  },
+  {
+   "model": "ens_equal_ml",
+   "time_fpr": 0.0161,
+   "mde_log": 0.635,
+   "testable": 1.0
+  },
+  {
+   "model": "lgbm",
+   "time_fpr": 0.0323,
+   "mde_log": 0.6427,
+   "testable": 1.0
+  },
+  {
+   "model": "xgb",
+   "time_fpr": 0.0161,
+   "mde_log": 0.6444,
+   "testable": 1.0
+  },
+  {
+   "model": "enet_tB",
+   "time_fpr": 0.0484,
+   "mde_log": 0.6507,
+   "testable": 1.0
+  },
+  {
+   "model": "rf_tA",
+   "time_fpr": 0.0161,
+   "mde_log": 0.6646,
+   "testable": 1.0
+  },
+  {
+   "model": "rf",
+   "time_fpr": 0.0161,
+   "mde_log": 0.6969,
+   "testable": 1.0
+  },
+  {
+   "model": "rf_tB",
+   "time_fpr": 0.0323,
+   "mde_log": 0.7053,
+   "testable": 1.0
+  },
+  {
+   "model": "lgbm_tA",
+   "time_fpr": 0.0323,
+   "mde_log": 0.7116,
+   "testable": 1.0
+  },
+  {
+   "model": "lgbm_tB",
+   "time_fpr": 0.0484,
+   "mde_log": 0.7185,
+   "testable": 1.0
+  },
+  {
+   "model": "chronos2_cov",
+   "time_fpr": 0.0323,
+   "mde_log": 0.7204,
+   "testable": 1.0
+  },
+  {
+   "model": "xgb_tA",
+   "time_fpr": 0.0161,
+   "mde_log": 0.7385,
+   "testable": 1.0
+  },
+  {
+   "model": "lgbm_har",
+   "time_fpr": 0.0161,
+   "mde_log": 0.7465,
+   "testable": 1.0
+  },
+  {
+   "model": "xgb_tB",
+   "time_fpr": 0.0484,
+   "mde_log": 0.7619,
+   "testable": 1.0
+  },
+  {
+   "model": "uc",
+   "time_fpr": 0.0645,
+   "mde_log": 0.8261,
+   "testable": 1.0
+  },
+  {
+   "model": "naive_mean",
+   "time_fpr": 0.0968,
+   "mde_log": 1.3946,
+   "testable": 1.0
+  },
+  {
+   "model": "timesfm_uni",
+   "time_fpr": 0.0161,
+   "mde_log": 1.4038,
+   "testable": 1.0
+  },
+  {
+   "model": "chronos2_uni",
+   "time_fpr": 0.0484,
+   "mde_log": 1.4755,
+   "testable": 1.0
+  }
+ ]
+}

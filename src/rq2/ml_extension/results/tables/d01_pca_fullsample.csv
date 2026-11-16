@@ -1,0 +1,5 @@
+﻿model,rmse_trainonly,rmse_fullpca,effrmse_trainonly,effrmse_fullpca
+lgbm,0.56697,0.57756,0.20669,0.20353
+ols,0.48738,0.47801,0.18385,0.1717
+rf,0.59598,0.60034,0.2509,0.2471
+xgb,0.55801,0.55956,0.26188,0.24904

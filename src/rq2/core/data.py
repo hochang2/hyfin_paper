@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 CACHE = ROOT / "data" / "interim" / "rq_cache"
 CFG_PATH = ROOT / "configs" / "rq2.yaml"
 

@@ -1,9 +1,9 @@
 """시계열 foundation model 반사실 (Chronos-2, TimesFM 2.5) — 확장 실험 RQ2-E-FM.
 
 환경이 둘로 나뉜다 (기존 분석 환경의 패키지 버전을 바꾸지 않으려고):
-  1) 분석 환경   py -m src.rq2.foundation export    → data/interim/rq_cache/fm_input.parquet
-  2) FM 환경     .venv-fm/Scripts/python -m src.rq2.foundation forecast   → data/interim/rq_cache/fm_output.parquet
-  3) 분석 환경   py -m src.rq2.foundation collect   → results/tables/rq2_foundation*.csv + 실험 로그
+  1) 분석 환경   py -m src.rq2.main_study.foundation export    → data/interim/rq_cache/fm_input.parquet
+  2) FM 환경     .venv-fm/Scripts/python -m src.rq2.main_study.foundation forecast   → data/interim/rq_cache/fm_output.parquet
+  3) 분석 환경   py -m src.rq2.main_study.foundation collect   → results/tables/rq2_foundation*.csv + 실험 로그
 
 변형 (같은 절단일·같은 정보):
   chronos2_uni   y 만 (공통충격 통제 없음 → '통제 안 하면 어떻게 되는가' 대조용)
@@ -24,7 +24,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 CACHE = ROOT / "data" / "interim" / "rq_cache"
 COV = ["don_mean", "kosdaq_lrv", "us_lvix", "us_abs_sox", "gap_day"]
 CODES = ["005930", "000660", "005935"]
@@ -32,8 +32,8 @@ CODES = ["005930", "000660", "005935"]
 
 # ---------------------------------------------------------------- 1) export (분석 환경)
 def export():
-    from src.rq2.data import build_controls, load_panel
-    from src.rq2.pipeline import CFG
+    from src.rq2.core.data import build_controls, load_panel
+    from src.rq2.core.pipeline import CFG
     lv = load_panel("rv5").loc[CFG["sample"]["start"]:CFG["sample"]["end"]]
     X = build_controls(CFG)[COV]
     df = pd.concat([lv[CODES], X], axis=1).dropna()
@@ -98,9 +98,9 @@ def forecast():
 
 # ---------------------------------------------------------------- 3) collect (분석 환경)
 def collect():
-    from src.rq2.explog import ExpLog
-    from src.rq2.pipeline import TL, effect_windows
-    from src.rq2.run_all import LOG, OUT, TAB, save
+    from src.rq2.core.explog import ExpLog
+    from src.rq2.core.pipeline import TL, effect_windows
+    from src.rq2.main_study.run_all import LOG, OUT, TAB, save
     import json
     o = pd.read_parquet(CACHE / "fm_output.parquet")
     o["e"] = o.y - o.pred

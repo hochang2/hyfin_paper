@@ -1,0 +1,5 @@
+﻿dataset,window,selected_on_first_half,first_half_rmse,second_half_rmse,second_half_rank,n_models,second_half_best,second_half_best_rmse,rank_corr_halves
+rv5,h30,did_gap,0.16448,0.32415,13,17,uc,0.19328,0.40196
+rv5,h10,bsts,0.21371,0.29261,4,17,timesfm_xreg,0.28362,0.6152
+gk,h30,timesfm_xreg,0.31668,0.32364,2,17,did_gap,0.32322,0.79167
+gk,h10,timesfm_xreg,0.36097,0.37292,1,17,timesfm_xreg,0.37292,0.91422
