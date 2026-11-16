@@ -47,6 +47,12 @@ pip install -e ".[dev]"
 motherduck_token=<내 토큰>
 ```
 
+Windows 사용자 폴더 경로에 한글이 있으면(예: `C:\Users\홍길동`) 접속이 실패한다. 영문 폴더를 하나 만들고 `.env`에 한 줄 더 넣는다.
+
+```
+duckdb_home=C:/duckdb_ext
+```
+
 ## 데이터 정책
 
 - 키움·FnGuide 원자료, 토큰, 유료 데이터는 커밋하지 않는다. FnGuide 데이터는 팀 내부 연구용이다.
