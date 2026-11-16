@@ -1,0 +1,86 @@
+# 실험 로그 (experiment_log)
+
+총 11건. 생성: 2026-11-16 13:12
+
+## RQ2-ML-E1-RV5 [extension] — ok
+- **목적**: 반사실 예측 벤치마크 (가짜 개입일 rolling-origin)
+- **데이터**: rv5
+- **모형**: ["bsts", "ols", "timesfm_xreg", "lgbm_har", "ens_hybrid", "uc", "ens_stack", "chronos2_cov", "rf_tA", "ens_invmse", "ens_equal", "rf_tB", "ridge", "lgbm", "sarimax", "enet", "enet_tA", "ens_equal_ml", "enet_tB", "lgbm_tA", "did_gap", "xgb_tB", "rf", "lgbm_tB", "xgb", "xgb_tA", "harx", "naive_mean", "chronos2_uni", "timesfm_uni"]
+- **설정**: `{"seed": 20261116, "datasets": {"rv5": {"codes": ["005930", "000660", "005935"], "controls": "C_main", "train": "expanding", "first_cutoff": 90, "cutoff_step": 3, "last_index_exclusive": 190, "listing_index": 155, "max_h": 71}, "gk": {"codes": ["005930", "000660", "005935"], "controls": ["don_mean", "us_lvix", "us_abs_sox", "kosdaq_ret_abs"], "train": "rolling", "train_len": 250, "first_cutoff_date": "2016-06-01", "cutoff_step": 10, "max_h": 71}, "space": {"controls": "C_main"}}, "windows": {"h5": [0, 5], "h10": [0, 10], "h20": [0, 20], "h30": [0, 30], "h61": [0, 61], "transition": [0, 10], "post_effective": [10, 71]}, "bsts_bench": {"niter": 2000, "burn": 500, "expected_model_size": 3, "prior_level_sd": 0.01, "prior_level_df": 32}}`
+- **진단**: {"n_failed_fits": 0}
+- **결과**: {"h30_effect_rmse_top5": [{"model": "bsts", "eff_rmse": 0.1796}, {"model": "ols", "eff_rmse": 0.1869}, {"model": "timesfm_xreg", "eff_rmse": 0.1891}, {"model": "lgbm_har", "eff_rmse": 0.2044}, {"model": "ens_hybrid", "eff_rmse": 0.208}], "ols": 0.186920934563105}
+
+## RQ2-ML-E2-RV5 [extension] — ok
+- **목적**: 합성 개입 회복·검정력·MDE
+- **데이터**: rv5
+- **모형**: all
+- **설정**: `{"effects": [0, -5, -10, -20, -30, -40], "scenarios": {"A_immediate": {"kind": "constant"}, "B_gradual": {"kind": "ramp", "ramp_days": 20}, "C_temporary": {"kind": "decay", "half_life": 10}, "D_heterogeneous": {"kind": "state", "slope": 0.5}, "E_highvol_only": {"kind": "highvol"}}}`
+- **결과**: {"window": "h10", "mde_time_pct_best5": {"bsts": -45.2, "ols": -45.2, "timesfm_xreg": -46.1, "ens_stack": -46.6, "ens_invmse": -46.6}}
+
+## RQ2-ML-E1-GK [extension] — ok
+- **목적**: 반사실 예측 벤치마크 (가짜 개입일 rolling-origin)
+- **데이터**: gk
+- **모형**: ["ens_stack", "timesfm_xreg", "ens_invmse", "ens_equal", "bsts", "sarimax", "did_gap", "ens_hybrid", "enet_tA", "ols", "ridge", "enet", "ens_equal_ml", "xgb_tA", "chronos2_cov", "enet_tB", "uc", "xgb", "rf", "rf_tA", "lgbm", "rf_tB", "xgb_tB", "harx", "lgbm_tB", "lgbm_tA", "lgbm_har", "timesfm_uni", "naive_mean", "chronos2_uni"]
+- **설정**: `{"seed": 20261116, "datasets": {"rv5": {"codes": ["005930", "000660", "005935"], "controls": "C_main", "train": "expanding", "first_cutoff": 90, "cutoff_step": 3, "last_index_exclusive": 190, "listing_index": 155, "max_h": 71}, "gk": {"codes": ["005930", "000660", "005935"], "controls": ["don_mean", "us_lvix", "us_abs_sox", "kosdaq_ret_abs"], "train": "rolling", "train_len": 250, "first_cutoff_date": "2016-06-01", "cutoff_step": 10, "max_h": 71}, "space": {"controls": "C_main"}}, "windows": {"h5": [0, 5], "h10": [0, 10], "h20": [0, 20], "h30": [0, 30], "h61": [0, 61], "transition": [0, 10], "post_effective": [10, 71]}, "bsts_bench": {"niter": 2000, "burn": 500, "expected_model_size": 3, "prior_level_sd": 0.01, "prior_level_df": 32}}`
+- **진단**: {"n_failed_fits": 0}
+- **결과**: {"h30_effect_rmse_top5": [{"model": "ens_stack", "eff_rmse": 0.3143}, {"model": "timesfm_xreg", "eff_rmse": 0.3197}, {"model": "ens_invmse", "eff_rmse": 0.3226}, {"model": "ens_equal", "eff_rmse": 0.3231}, {"model": "bsts", "eff_rmse": 0.3234}], "ols": 0.33754223808618544}
+
+## RQ2-ML-E2-GK [extension] — ok
+- **목적**: 합성 개입 회복·검정력·MDE
+- **데이터**: gk
+- **모형**: all
+- **설정**: `{"effects": [0, -5, -10, -20, -30, -40], "scenarios": {"A_immediate": {"kind": "constant"}, "B_gradual": {"kind": "ramp", "ramp_days": 20}, "C_temporary": {"kind": "decay", "half_life": 10}, "D_heterogeneous": {"kind": "state", "slope": 0.5}, "E_highvol_only": {"kind": "highvol"}}}`
+- **결과**: {"window": "h30", "mde_time_pct_best5": {"ens_stack": -58.4, "timesfm_xreg": -59.1, "ens_invmse": -59.3, "ens_equal": -59.4, "bsts": -59.5}}
+
+## RQ2-ML-E2-SPACE [extension] — ok
+- **목적**: donor 순열 검정의 FPR·검정력 (실제 개입일)
+- **데이터**: space
+- **모형**: all
+- **설정**: ``
+- **결과**: {"-20": {"bsts": 0.109, "chronos2_cov": 0.083, "chronos2_uni": 0.126, "did_gap": 0.094, "enet": 0.08, "enet_tA": 0.15, "enet_tB": 0.15, "ens_equal": 0.111, "ens_equal_ml": 0.091, "ens_hybrid": 0.103, "ens_invmse": 0.111, "ens_stack": 0.134, "harx": 0.089, "lgbm": 0.1, "lgbm_har": 0.097, "lgbm_tA": 0.1, "lgbm_tB": 0.162, "naive_mean": 0.097, "ols": 0.094, "rf": 0.083, "rf_tA": 0.15, "rf_tB": 0.138, "ridge": 0.111, "sarimax": 0.143, "timesfm_uni": 0.126, "timesfm_xreg": 0.137, "uc": 0.137, "xgb": 0.1, "xgb_tA": 0.138, "xgb_tB": 0.125}, "0": {"bsts": 0.046, "chronos2_cov": 0.046, "chronos2_uni": 0.046, "did_gap": 0.049, "enet": 0.046, "enet_tA": 0.05, "enet_tB": 0.05, "ens_equal": 0.049, "ens_equal_ml": 0.046, "ens_hybrid": 0.046, "ens_invmse": 0.046, "ens_stack": 0.046, "harx": 0.046, "lgbm": 0.046, "lgbm_har": 0.046, "lgbm_tA": 0.062, "lgbm_tB": 0.075, "naive_mean": 0.049, "ols": 0.046, "rf": 0.046, "rf_tA": 0.05, "rf_tB": 0.062, "ridge": 0.046, "sarimax": 0.049, "timesfm_uni": 0.046, "timesfm_xreg": 0.046, "uc": 0.046, "xgb": 0.046, "xgb_tA": 0.062, "xgb_tB": 0.05}}
+
+## RQ2-ML-E3 [extension] — ok
+- **목적**: Optuna 중첩 시계열 CV 튜닝 전후
+- **데이터**: rv5, gk
+- **모형**: ["lgbm", "xgb", "enet", "rf"]
+- **설정**: `{"models": ["lgbm", "xgb", "enet", "rf"], "objectives": ["A_forecast", "B_effect"], "n_trials": 30, "n_startup": 10, "inner_folds": 4, "inner_val_len": 20, "datasets": ["rv5", "gk"], "gk_cutoff_every": 3}`
+- **결과**: [{"dataset": "rv5", "model": "lgbm", "effect_rmse_h30": 0.2214, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "lgbm_tA", "effect_rmse_h30": 0.258, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "lgbm_tB", "effect_rmse_h30": 0.2659, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "xgb", "effect_rmse_h30": 0.2774, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "xgb_tA", "effect_rmse_h30": 0.2881, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "xgb_tB", "effect_rmse_h30": 0.266, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "enet", "effect_rmse_h30": 0.2355, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "enet_tA", "effect_rmse_h30": 0.2402, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "enet_tB", "effect_rmse_h30": 0.2468, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "rf", "effect_rmse_h30": 0.2696, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "rf_tA", "effect_rmse_h30": 0.222, "mde_time_pct_h30": NaN}, {"dataset": "rv5", "model": "rf_tB", "effect_rmse_h30": 0.2262, "mde_time_pct_h30": NaN}, {"dataset": "gk", "model": "lgbm", "effect_rmse_h30": 0.3632, "mde_time_pct_h30": -63.3823}, {"dataset": "gk", "model": "lgbm_tA", "effect_rmse_h30": 0.3731, "mde_time_pct_h30": -64.2493}, {"dataset": "gk", "model": "lgbm_tB", "effect_rmse_h30": 0.3713, "mde_time_pct_h30": -64.3626}, {"dataset": "gk", "model": "xgb", "effect_rmse_h30": 0.3551, "mde_time_pct_h30": -62.3854}, {"dataset": "gk", "model": "xgb_tA", "effect_rmse_h30": 0.3535, "mde_time_pct_h30": -62.3689}, {"dataset": "gk", "model": "xgb_tB", "effect_rmse_h30": 0.3642, "mde_time_pct_h30": -63.536}, {"dataset": "gk", "model": "enet", "effect_rmse_h30": 0.3489, "mde_time_pct_h30": -61.7863}, {"dataset": "gk", "model": "enet_tA", "effect_rmse_h30": 0.3394, "mde_time_pct_h30": -60.9815}, {"dataset": "gk", "model": "enet_tB", "effect_rmse_h30": 0.355, "mde_time_pct_h30": -62.5859}, {"dataset": "gk", "model": "rf", "effect_rmse_h30": 0.356, "mde_time_pct_h30": -62.7124}, {"dataset": "gk", "model": "rf_tA", "effect_rmse_h30": 0.3591, "mde_time_pct_h30": -62.8932}, {"dataset": "gk", "model": "rf_tB", "effect_rmse_h30": 0.364, "mde_time_pct_h30": -63.418}]
+
+## RQ2-ML-E4 [extension] — ok
+- **목적**: 앙상블·오차 상관
+- **데이터**: rv5, gk, space
+- **모형**: ["ens_equal", "ens_equal_ml", "ens_invmse", "ens_stack", "ens_hybrid"]
+- **설정**: `{"members_all": ["ols", "ridge", "bsts", "sarimax", "uc", "harx", "enet", "rf", "lgbm", "xgb"], "members_ml": ["enet", "rf", "lgbm", "xgb"], "hybrid": {"bsts": 0.5, "lgbm": 0.25, "xgb": 0.25}, "min_past_days": 30, "stack_alpha": 1.0}`
+- **결과**: [{"dataset": "gk", "model": "ens_equal", "eff_rmse": 0.3231}, {"dataset": "gk", "model": "ens_equal_ml", "eff_rmse": 0.3477}, {"dataset": "gk", "model": "ens_hybrid", "eff_rmse": 0.3316}, {"dataset": "gk", "model": "ens_invmse", "eff_rmse": 0.3226}, {"dataset": "gk", "model": "ens_stack", "eff_rmse": 0.3143}, {"dataset": "rv5", "model": "ens_equal", "eff_rmse": 0.213}, {"dataset": "rv5", "model": "ens_equal_ml", "eff_rmse": 0.2381}, {"dataset": "rv5", "model": "ens_hybrid", "eff_rmse": 0.208}, {"dataset": "rv5", "model": "ens_invmse", "eff_rmse": 0.2121}, {"dataset": "rv5", "model": "ens_stack", "eff_rmse": 0.2086}]
+
+## RQ2-ML-E5 [extension] — ok
+- **목적**: 실제 규제 효과 재추정 (사전 지정 모형)
+- **데이터**: rv5 실제 개입일 (space 과제)
+- **모형**: harx
+- **설정**: `{"dataset": "rv5", "window": "h30", "max_calibrated_fpr": 0.1, "criterion": "min_calibrated_mde", "codes": ["005930", "000660"], "fallback_windows": ["h20", "h10", "h5"]}`
+- **결과**: [{"code": "000660", "window": "post_effective", "effect": -0.0759, "time_p": NaN, "space_p": 0.7955, "primary_p": 0.7955, "primary_p_source": "space", "primary_p_holm": 1.0}, {"code": "000660", "window": "transition", "effect": 0.0423, "time_p": 0.7152, "space_p": 0.8636, "primary_p": 0.7152, "primary_p_source": "time", "primary_p_holm": 1.0}, {"code": "005930", "window": "post_effective", "effect": 0.0922, "time_p": NaN, "space_p": 0.7727, "primary_p": 0.7727, "primary_p_source": "space", "primary_p_holm": 1.0}, {"code": "005930", "window": "transition", "effect": 0.1278, "time_p": 0.4863, "space_p": 0.5739, "primary_p": 0.4863, "primary_p_source": "time", "primary_p_holm": 1.0}, {"code": "005935", "window": "post_effective", "effect": 0.2575, "time_p": NaN, "space_p": 0.4091, "primary_p": 0.4091, "primary_p_source": "space", "primary_p_holm": NaN}, {"code": "005935", "window": "transition", "effect": 0.2116, "time_p": 0.8746, "space_p": 0.4034, "primary_p": 0.8746, "primary_p_source": "time", "primary_p_holm": NaN}]
+- **해석**: 모형 선택은 가짜 개입일 결과만으로 사전에 정함. 다른 모형은 민감도.
+
+## RQ2-ML-FAIL-TIMENULL-OVERLAP [extension] — failed
+- **목적**: time-보정 귀무분포가 겹치는 가짜 개입 창(rv5 3일 간격)을 독립으로 취급
+- **데이터**: rv5, gk
+- **모형**: all
+- **설정**: ``
+- **결과**: {"before": "rv5 h30 time FPR 0.2~0.4 (BSTS 005935 0.42), 실제 BSTS 005930 post time_p 0.001", "fix": "비겹침 유효 창 수 n_eff 로 자유도·예측구간, n_eff<3 이면 검정 불가", "after": "rv5 h10 FPR 0.02~0.12, h30·h61·post_effective time 검정 불가"}
+- **해석**: 사전 지정 선정 창 h30 이 검정 불가가 되어 fallback_windows 로 h10 사용 (규칙 이탈, 공개)
+
+## RQ2-ML-FAIL-SPACE-DONOR-MISMATCH [extension] — failed
+- **목적**: 튜닝 모형만 donor 40개로 space 순열검정 → 기본 모형(donor 175개)과 검정력 비교 불공정
+- **데이터**: space
+- **모형**: *_tA, *_tB
+- **설정**: ``
+- **결과**: {"before": "-40% 검정력 튜닝 0.45~0.60 vs 기본 ML 0.21~0.26", "after_common40": "같은 donor 40개에서 모든 모형 0.45~0.78, 튜닝 이점 없음"}
+- **해석**: exp2_space_permutation_common40 을 비교 기준으로 사용
+
+## RQ2-ML-FAIL-SPACE-TUNE-HANG [extension] — failed
+- **목적**: space enet_tB 튜닝이 joblib 작업자 대기로 2시간 무진행
+- **데이터**: space
+- **모형**: enet_tB
+- **설정**: ``
+- **결과**: {"action": "해당 실행 프로세스 트리만 종료 후 tune 단계 재실행 (캐시 이어받기)", "rerun": "정상 완료"}
+- **해석**: 결과에는 영향 없음 (완료된 과제만 캐시에 저장되는 구조)

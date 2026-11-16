@@ -12,18 +12,19 @@
 | 3. 확장 모형 | 완료 (11개 모형 + Chronos-2·TimesFM + GARCH) | - |
 | 4. 진단 | 완료 (D01~D05, 통제 오염 점검 포함) | - |
 | 5. 강건성 | 완료 (BSTS 24·OLS 20 사양, placebo 4종, 미국 변수 반사실) | - |
-| 6. 종합 보고서 | 완료 (src/rq2/REPORT.md, 2026-11-16) | - |
+| 6. 종합 보고서 | 완료 (src/rq2/main_study/results/REPORT.md, 2026-11-16) | - |
+| 7. ML 확장 하위실험 | 완료 (src/rq2/ml_extension/results/REPORT.md, 2026-11-16) | - |
 
 ## 실행 방법
 
 ```
-py -m src.rq2.run_all                       # 전 단계
-py -m src.rq2.run_all --stages primary,figures
-py -m pytest src/rq2/test_bsts.py           # BSTS 구현 검증 (모의자료)
+py -m src.rq2.main_study.run_all                       # 전 단계
+py -m src.rq2.main_study.run_all --stages primary,figures
+py -m pytest src/rq2/tests                  # BSTS 구현 검증 (모의자료)
 ```
 
 - 설정: `configs/rq2.yaml`
-- 결과: `src/rq2/results/{tables,figures}`, `experiment_log.{csv,md}`, `environment.json`
+- 결과: `src/rq2/main_study/results/{tables,figures}`, `experiment_log.{csv,md}`, `environment.json`
 - DB 캐시: `data/interim/rq_cache/*.parquet` (Git 제외). 지우면 MotherDuck 에서 다시 받는다.
 
 ## 내린 결정 (공통 설정 변경 제안 포함)
@@ -41,7 +42,7 @@ py -m pytest src/rq2/test_bsts.py           # BSTS 구현 검증 (모의자료)
 7. **주 검정 family**: {005930, 000660} × {transition 07-16~07-30, post_effective 07-31~10-30}. Holm 보정.
    그 밖의 결과는 탐색적 분석으로 취급한다.
 
-## RQ2 결과 메모 (최종 해석은 src/rq2/REPORT.md)
+## RQ2 결과 메모 (최종 해석은 src/rq2/main_study/results/REPORT.md)
 
 - BSTS 주 분석: post_effective 효과는 005930 +0.05 [−0.18, 0.28], 000660 −0.05 [−0.27, 0.15]. 둘 다 0 근처다.
   transition 은 두 종목 모두 양(+)인데, 000660 의 비보정 p=0.038 은 Holm 보정 후 0.15 이다.
@@ -55,6 +56,14 @@ py -m pytest src/rq2/test_bsts.py           # BSTS 구현 검증 (모의자료)
   - 국내 통제의 하락은 7월 급등의 되돌림으로 해석된다. 시장 전체 냉각의 증거는 없다.
 - 같은 기업 BSTS 의 21~61일 −0.25 (p=0.023) 는 Holm 0.18, 긴 표본 보정 p 0.85 다. 근거로 쓰지 않는다 (R-WITHIN-CALIB).
 - 다음: RQ2 결론을 사용자에게 보고한 뒤 RQ4 에 착수한다. events.yaml 사건일 갱신은 연구자 B 에게 제안할 것.
+
+## RQ2 ML 확장 메모 (src/rq2/ml_extension/results/REPORT.md)
+
+- 질문: 반사실 모형에 ML·FM 을 넣어 얻는 순이익이 있었나 → 없다 (예측·검출력·튜닝·앙상블 모두).
+- rv5 30일 효과오차: BSTS 0.180, OLS 0.187, ML 0.217~0.267. gk 는 ens_stack 0.314 가 1위이고, 단독 ML 은 BSTS 보다 유의하게 나쁘다.
+- MDE(검정력 0.8): rv5 10일 −45%(OLS·BSTS), ML −50~−54%. −20% 는 어떤 모형도 검출 못 한다.
+- time 보정은 비겹침 유효 창 수(n_eff)로 한다. rv5 30일 이상은 검정 불가라서 사전 규칙의 fallback(10일)을 썼다 → harx 선정, 실제 효과 모두 비유의 (Holm p 1.0).
+- 다음: 2027-01 까지 표본 연장 시 `src/rq2/ml_extension/config.yaml` 날짜만 바꾸고 재실행. 해외 ETF 는 가장 나중.
 
 ## RQ4 설계 메모 (착수 전)
 
