@@ -1,0 +1,95 @@
+# RQ2 ML 확장 하위실험 설정 (src/rq2/phase1/ml_extension). 1차 연구 설정(configs/rq2.yaml)은 읽기만 한다.
+# 이 파일의 값은 실험 로그(settings)에 그대로 남는다. 값 변경 = 새 실험.
+
+seed: 20261116
+n_jobs: 11                       # joblib 병렬 프로세스 수 (각 프로세스 BLAS/트리 스레드 1)
+cache_dir: data/interim/rq_cache/ml_ext   # 저장소 루트 기준 (Git 제외)
+
+# ------------------------------------------------------------------ 데이터셋
+# 5분봉 rv5 와 일별 GK 는 서로 다른 결과변수다. 결과를 섞지 않는다.
+datasets:
+  rv5:                         # 분봉 log RV, 2025-10-01 ~ 2026-10-30 (261일)
+    codes: ["005930", "000660", "005935"]
+    controls: C_main           # configs/rq2.yaml controls 이름 (주 분석과 같은 통제)
+    train: expanding           # 표본 시작 ~ 가짜 개입일 전날
+    first_cutoff: 90           # 가짜 개입일 = 표본 내 위치 (학습 >= 90일: core OOF 잔차 fold 가 60일부터 시작)
+    cutoff_step: 3
+    last_index_exclusive: 190  # 2026-07-16(발표일) 위치. 평가창은 발표 전날까지만 (규제 정보 차단)
+    listing_index: 155         # 2026-05-27 상장일 위치 (창이 이것을 넘으면 crosses_listing=True)
+    max_h: 71
+  gk:                          # F1 일별 OHLC log Garman-Klass, 2015-06 ~ (긴 표본)
+    codes: ["005930", "000660", "005935"]
+    controls: [don_mean, us_lvix, us_abs_sox, kosdaq_ret_abs]   # 1차 연구 P03 과 같은 통제
+    train: rolling
+    train_len: 250
+    first_cutoff_date: 2016-06-01
+    cutoff_step: 10
+    max_h: 71                  # 창 끝이 상장일(2026-05-27) 전
+  space:                       # 실제 개입일(2026-07-16)에서 donor 175 종목 + 처치 2 + 음성통제 1
+    controls: C_main           # donor 는 자기 자신을 뺀 donor 평균 (1차 연구 P02 와 같음)
+
+# 평가창 (가짜 개입일 다음 날부터의 위치 [a, b) )
+windows:
+  h5: [0, 5]
+  h10: [0, 10]
+  h20: [0, 20]
+  h30: [0, 30]
+  h61: [0, 61]
+  transition: [0, 10]          # 실제 일정: 발표~시행 전 10거래일
+  post_effective: [10, 71]     # 시행 후 61거래일 (주 분석 창)
+horizons: [h5, h10, h20, h30, h61]
+
+# ------------------------------------------------------------------ 모형
+bsts_bench: {niter: 2000, burn: 500, expected_model_size: 3, prior_level_sd: 0.01, prior_level_df: 32}
+statistical: [naive_mean, did_gap, ols, ridge, bsts, sarimax, uc, harx]
+ml: [enet, rf, lgbm, xgb]
+foundation: [chronos2_cov, timesfm_xreg, chronos2_uni, timesfm_uni]
+extra: [lgbm_har]              # ML + 재귀 HAR 시차 (사후 실제 y 미사용)
+
+# ------------------------------------------------------------------ 효과 주입 (실험 2)
+effects_pct: [0, -5, -10, -20, -30, -40]   # RV 척도 % 변화. log 척도 tau = ln(1 + pct/100)
+scenarios:
+  A_immediate: {kind: constant}
+  B_gradual: {kind: ramp, ramp_days: 20}
+  C_temporary: {kind: decay, half_life: 10}
+  D_heterogeneous: {kind: state, slope: 0.5}     # tau_t = tau * clip(1 + 0.5 z_t, 0, 2), z_t = 표준화 donor 평균 RV (학습구간 통계)
+  E_highvol_only: {kind: highvol}                 # tau_t = 2 tau * 1{z_t > 0}
+spillover:                      # 시나리오 F: 효과 일부가 국내 통제(donor 평균, KOSDAQ RV)로 번짐 → 재예측 필요
+  share: [0.5]
+  effects_pct: [-20, -40]
+  controls: [don_mean, kosdaq_lrv]
+  windows: [h10, h30, h61]
+alpha: 0.05
+time_null_min_eff: 3            # time-보정 귀무분포: 서로 겹치지 않는 창이 3개 미만이면 검정 불가 (2026-11-16 수정, FAIL-TIMENULL-OVERLAP)
+power_target: 0.8
+
+# ------------------------------------------------------------------ 튜닝 (실험 3)
+tuning:
+  models: [lgbm, xgb, enet, rf]
+  objectives: [A_forecast, B_effect]   # A: 내부 검증 일별 MSE / B: 내부 가짜개입 창평균 오차 MSE (= 효과추정 MSE)
+  n_trials: 30
+  n_startup: 10
+  inner_folds: 4
+  inner_val_len: 20             # 학습이 짧으면 max(5, (n-40)//4) 로 줄임
+  datasets: [rv5, gk]
+  gk_cutoff_every: 3            # gk 는 가짜 개입일 3개 중 1개만 튜닝 (계산비용)
+
+# ------------------------------------------------------------------ 앙상블 (실험 4)
+ensemble:
+  members_all: [ols, ridge, bsts, sarimax, uc, harx, enet, rf, lgbm, xgb]
+  members_ml: [enet, rf, lgbm, xgb]
+  hybrid: {bsts: 0.5, lgbm: 0.25, xgb: 0.25}
+  min_past_days: 30             # 가중치 학습에 쓸 과거 실현 일수 (미만이면 동일가중으로 대체)
+  stack_alpha: 1.0
+
+# ------------------------------------------------------------------ 실제 재추정 (실험 5) — 사전 지정 선정 규칙
+# 실제 사후 효과를 보기 전에 고정. 처치 종목의 사후 y 는 선정에 쓰지 않는다.
+selection_rule:
+  dataset: rv5
+  window: h30
+  max_calibrated_fpr: 0.10     # 보정 추론 위양성률 상한
+  criterion: min_calibrated_mde # 그 중 보정 MDE 최소
+  codes: ["005930", "000660"]
+  # 2026-11-16 추가 (FAIL-TIMENULL-OVERLAP): 겹침 보정 후 rv5 h30 은 time 검정이 불가능 (유효 창 1.5개).
+  # 규칙 창에서 모든 과제가 검정 가능하지 않으면, 모든 과제가 검정 가능한 가장 긴 지평으로 내려간다.
+  fallback_windows: [h20, h10, h5]

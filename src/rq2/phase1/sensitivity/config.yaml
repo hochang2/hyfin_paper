@@ -1,0 +1,63 @@
+# RQ2 최종 민감도 분석 (src/rq2/phase1/sensitivity)
+# main_study · ml_extension · ml_followup · ensemble 의 결과와 캐시는 읽기만 한다. 기존 파일은 고치지 않는다.
+# 새 예측모형·ML 재학습·Optuna·FM 미세조정 없음. 적합이 필요한 것은 주 분석 BSTS·통계모형을 같은 설정으로 다시 돌리는 섭동 검증뿐.
+# 격자와 규칙은 결과를 보기 전에 정했다 (2026-11-17). 값을 바꾸면 새 실험이다.
+
+seed: 20261119
+cache_dir: data/interim/rq_cache/sensitivity   # 이 실험의 재적합 캐시 (Git 제외)
+
+# ------------------------------------------------------------------ 기준 추정치 (주 분석 61일 post_effective, log RV)
+# 값은 기존 결과표에서 읽는다 (common.base_estimates). 여기서는 설계 이름과 null 출처만 정한다.
+designs:
+  BSTS_005930:     {code: "005930", kind: bsts,    null: space_bsts}
+  BSTS_000660:     {code: "000660", kind: bsts,    null: space_bsts}
+  DIFF_005930:     {code: "005930", kind: diff,    null: gk_diff_long}
+  SIMPLEX_005930:  {code: "005930", kind: simplex, null: space_simplex}
+  SIMPLEX_000660:  {code: "000660", kind: simplex, null: space_simplex}
+
+# ------------------------------------------------------------------ Exp1 bias 민감도
+bias:
+  grid: [-0.20, -0.15, -0.10, -0.05, 0.0, 0.05, 0.10, 0.15, 0.20]
+  targets_pct: [-5, -10, -20, -30]     # 실제 효과가 이 정도로 감소였다는 결론이 되려면 필요한 bias
+  similar_prefit_k: 25                 # pre-fit 이 비슷한 donor 수 (pre_rmse 기준)
+  recent_from: "2024-01-01"            # GK '최근' 구간
+  rolling_years: 2                     # GK 이동 평균 bias
+  validation:                          # 별도 기간 검증: 이 기간 가짜 개입일의 bias 를 그 이전 완전 실현 창으로만 추정
+    start: "2022-01-01"
+    shrink_kappa: 10                   # 축소 추정: b * n_eff/(n_eff+kappa)
+
+# ------------------------------------------------------------------ Exp2 통제 오염
+contamination:
+  shares: [0.0, 0.10, 0.25, 0.50, 0.75, 1.00]
+  true_effects_pct: [-10, -20, -30]
+  unit_shock: -0.20                    # 섭동 크기 (log). 선형성은 -0.10 과 비교해 검증
+  partial_top_frac: 0.30               # 시나리오 D: 사전 상관 상위 30% donor 만 오염
+  models: [bsts, ols, ridge, uc, sarimax, harx]
+  near_zero: 0.02                      # |추정효과| < 0.02 log 이면 '0 근처'
+  refit_checks: [[0.5, -0.20], [1.0, -0.10]]   # (s, tau) 실제 재적합으로 선형 근사 검증
+
+# ------------------------------------------------------------------ Exp3 관측되지 않은 교란
+confounding:
+  diff_listing_days: 34                # 실제 상장기간(2026-05-27~07-15) 거래일 수와 같은 기준창
+  bsts_shapes: [constant, temporary, growing, market_interaction]
+  temporary_days: 10
+  benchmark_multiples: [0.5, 1, 2, 3]
+
+# ------------------------------------------------------------------ Exp4 사건일·창
+events:
+  announce: "2026-07-16"
+  early_effective_notice: "2026-07-24"
+  circuit_breaker: "2026-07-28"
+  effective: "2026-07-31"
+  additional_measures: "2026-08-03"
+  original_effective: "2026-08-05"
+  premium_rule: "2026-08-19"
+windows_after_effective: [5, 10, 20, 30, 61]
+donut: ["2026-07-28", "2026-08-04"]
+
+# ------------------------------------------------------------------ Exp5 결합
+joint:
+  bias_grid: [-0.10, 0.0, 0.10, 0.20, 0.30]
+  share_grid: [0.0, 0.25, 0.50, 0.75, 1.00]
+  conf_grid: [-0.10, 0.0, 0.10, 0.20]
+  structural_cells: [[0.10, 0.5, 0.10, -0.20], [0.20, 1.0, 0.0, -0.10]]   # (bias, share, conf, tau) BSTS 구조 시뮬레이션 검증

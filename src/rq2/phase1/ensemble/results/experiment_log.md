@@ -1,0 +1,60 @@
+# 실험 로그 (experiment_log)
+
+총 7건. 생성: 2026-11-17 11:53
+
+## EF-E1-PERF [diagnostic] — ok
+- **목적**: 개별 모형 효과오차 정확도·편향·창길이·종목·국면
+- **데이터**: ml_ext gk(3x238)·rv5(3x32), ml_followup rv5 donor 20·gk_dense
+- **모형**: 13개 기본 모형 + 기존 앙상블 (재학습 없음)
+- **설정**: `{"windows": ["h5", "h10", "h20", "h30", "h61", "post_effective"]}`
+- **결과**: rv5/h30: bsts 0.190 (BSTS 대비 1.000); rv5/h10: ols 0.255 (BSTS 대비 0.992); gk/h30: timesfm_xreg 0.320 (BSTS 대비 0.987); gkd/h30: did_gap 0.330 (BSTS 대비 0.939); gk/h10: timesfm_xreg 0.367 (BSTS 대비 0.957); gkd/h10: did_gap 0.385 (BSTS 대비 0.944); rv5d/h10: timesfm_xreg 0.412 (BSTS 대비 0.989); rv5d/h30: bsts 0.414 (BSTS 대비 1.000)
+- **해석**: 단일 최고 모형은 자료·창마다 바뀐다 (BSTS·OLS·TimesFM cov 가 번갈아). 큰 격차 없음.
+
+## EF-E1-DIV [diagnostic] — ok
+- **목적**: 오차 상관·공분산, BSTS 보완 후보
+- **데이터**: 창평균·일별 오차
+- **모형**: -
+- **설정**: `{"pair": "50/50 및 사후 최적 볼록결합(설명용)"}`
+- **결과**: BSTS 와 평균 오차상관/50:50 상대RMSE: uc 0.66/0.969, timesfm_xreg 0.90/0.978, chronos2_cov 0.80/0.991, ols 0.98/1.009, did_gap 0.83/1.024
+- **해석**: UC(0.66)를 빼면 BSTS 와의 오차상관이 0.8~0.98 로 높아 분산 감소 여지가 작다. 공통 양(+) 편향은 결합으로 상쇄되지 않는다.
+
+## EF-E2-SEL [extension] — ok
+- **목적**: 선택적 앙상블 (성능·다양성·제약 stacking·혼합) 온라인 성능
+- **데이터**: gk(2018~), rv5(i0>=120), rv5d(i0>=120), gkd(2018~)
+- **모형**: 25개 전략 + meta FTL
+- **설정**: `{"min_past_rows": 9, "min_past_rows_code": 5, "hier_kappa": 5, "bsts_shrink_kappa": 10, "cap": 0.4, "greedy_steps": 10, "pair_mse_tol": 1.25, "regime_min_rows": 9}`
+- **결과**: 4개 자료 평균 상대RMSE 상위: meta_ftl 0.935, h_bsts_chr_uc 0.940, bc_invmse_top3 0.964, h_bsts_ols_chr 0.965, simplex 0.965, greedy 0.966
+- **해석**: 같은 표본에서 수십 개 전략 중 최고 → 선택 편향 있음. 판정은 Exp4.
+
+## EF-E3-ADAPT [extension] — ok
+- **목적**: 종목 적응(code/hier/glocal)·국면 적응(vol/trend) 가중치
+- **데이터**: 같은 온라인 자료
+- **모형**: simplex_l2, invmse_top3 기준
+- **설정**: `{"vol_lookback": 20, "ret_lookback": 20, "crash_q": 0.2, "rally_q": 0.8, "gk_eras": ["2016-01-01", "2020-01-01", "2022-01-01", "2024-01-01"]}`
+- **결과**: rv5d(donor 20) 에서 hier/glocal 상대RMSE simplex_l2|hier 0.904, simplex_l2|glocal 0.901, simplex_l2|code 0.904; 처치 rv5 simplex_l2|hier 1.047, simplex_l2|regime_trend 1.048
+- **해석**: 종목 적응의 이득은 종목이 많은 donor 단면에서만 (종목 고유 편향 보정). 처치 3종목·국면 적응은 이득 없음.
+
+## EF-E4-OOS [robustness] — ok
+- **목적**: 선정 구간(GK 2018-21)과 최종 구간(GK 2022-26) 분리 + rv5·donor 전이
+- **데이터**: gk, rv5, rv5d
+- **모형**: 사전 고정 선택 {'overall': 'stat_simplex', 'best_single': 'm:timesfm_xreg', 'selective': 'stat_simplex', 'stock_adaptive': 'simplex_l2|hier', 'regime_aware': 'simplex_l2|regime_trend', 'old_stack': 'old_stack'}
+- **설정**: `{"gk_burnin_end": "2017-12-31", "gk_select": ["2018-01-01", "2021-12-31"], "gk_holdout": ["2022-01-01", "2026-12-31"], "select_windows": ["h10", "h30", "post_effective"], "rv5_eval_from": 120, "boot_reps": 2000, "frozen_at": "2026-11-17 11:44:21"}`
+- **진단**: GK 는 ml_extension 에서 이미 본 자료 — 완전한 외부검증 아님. rv5 최종 구간 i0 14~21개.
+- **결과**: gk/h10: 상대RMSE 0.948, ΔMSE -10.2% [-19.3,-0.9]; gk/h30: 상대RMSE 0.988, ΔMSE -2.4% [-16.6,+11.2]; gk/post_effective: 상대RMSE 1.038, ΔMSE +7.8% [-5.0,+20.2]; rv5/h10: 상대RMSE 0.995, ΔMSE -1.0% [-6.5,+4.1]; rv5/h20: 상대RMSE 0.984, ΔMSE -3.2% [-7.8,+2.2]; rv5/h30: 상대RMSE 0.968, ΔMSE -6.2% [-10.2,-2.2]; rv5d/h10: 상대RMSE 0.984, ΔMSE -3.2% [-7.1,+0.5]; rv5d/h20: 상대RMSE 0.999, ΔMSE -0.2% [-2.6,+2.2]; rv5d/h30: 상대RMSE 0.995, ΔMSE -1.0% [-3.1,+1.1]; 선정-최종 순위상관 0.76; RC p: gk/h10 0.016, gk/h30 0.429, gk/post_effective 1.000, rv5/h10 0.107, rv5/h20 0.001, rv5/h30 0.102, rv5d/h10 0.045, rv5d/h20 0.001, rv5d/h30 0.001
+- **해석**: 최종 구간에서 BSTS 대비 개선은 h10 에서만 작고 불안정, post_effective 는 악화.
+
+## EF-E5-INF [placebo] — ok
+- **목적**: 앙상블 선택·가중치 학습까지 포함한 시간 placebo FPR·검정력·MDE
+- **데이터**: gk_dense 블록(32+1, 3일 격자), GK 10일 격자 블록(10+1, FM 포함)
+- **모형**: single_bsts, stat_simplex, sel, old_stack_replica, simplex
+- **설정**: `{"block_n_cut": 32, "block_slide_days": 30, "min_eff": 3, "methods": ["neff", "strict"], "effects_pct": [-10, -20, -30, -40, -50, -60, -70, -80], "gk10_block_n_cut": 10, "gk10_block_slide": 3}`
+- **결과**: gkd/h10/old_stack_replica: FPR 0.052, power-50 0.35; gkd/h10/sel: FPR 0.026, power-50 0.32; gkd/h10/simplex: FPR 0.035, power-50 0.36; gkd/h10/single_bsts: FPR 0.039, power-50 0.37; gkd/h10/stat_simplex: FPR 0.039, power-50 0.36; gkd/h20/old_stack_replica: FPR 0.043, power-50 0.32; gkd/h20/sel: FPR 0.017, power-50 0.25; gkd/h20/simplex: FPR 0.030, power-50 0.27; gkd/h20/single_bsts: FPR 0.035, power-50 0.31; gkd/h20/stat_simplex: FPR 0.022, power-50 0.29; gkd/h30/old_stack_replica: FPR 0.039, power-50 0.28; gkd/h30/sel: FPR 0.022, power-50 0.20; gkd/h30/simplex: FPR 0.043, power-50 0.23; gkd/h30/single_bsts: FPR 0.035, power-50 0.29; gkd/h30/stat_simplex: FPR 0.048, power-50 0.27; gk10/h10/old_stack_replica: FPR 0.083, power-50 0.35; gk10/h10/sel: FPR 0.079, power-50 0.32; gk10/h10/simplex: FPR 0.070, power-50 0.34; gk10/h10/single_bsts: FPR 0.088, power-50 0.37; gk10/h10/stat_simplex: FPR 0.066, power-50 0.35; gk10/h30/old_stack_replica: FPR 0.026, power-50 0.20; gk10/h30/sel: FPR 0.018, power-50 0.14; gk10/h30/simplex: FPR 0.018, power-50 0.16; gk10/h30/single_bsts: FPR 0.044, power-50 0.24; gk10/h30/stat_simplex: FPR 0.004, power-50 0.17
+- **해석**: cross-fitted 귀무는 FPR 를 명목 이하로 유지하나 검정력은 BSTS 와 같거나 낮다 — 추론 개선 없음.
+
+## EF-E6-REAL [robustness] — ok
+- **목적**: 실제 규제일 효과 (탐색적 강건성; 주 분석 유지)
+- **데이터**: ml_ext space i0=190 (처치 2·음성통제 1·donor 175)
+- **모형**: BSTS·최고 단일·FM·기존 stacking·사전 고정 앙상블
+- **설정**: `{"codes": ["005930", "000660", "005935"], "windows": {"transition": "h10", "post_effective": "post_effective"}, "best_single_rule": "rv5 발표 전 가짜 개입일 h10 RMSE (3종목 합산) 최소", "picks": {"overall": "stat_simplex", "best_single": "m:timesfm_xreg", "selective": "stat_simplex", "stock_adaptive": "simplex_l2|hier", "regime_aware": "simplex_l2|regime_trend", "old_stack": "old_stack"}}`
+- **결과**: 005930 m:bsts: +0.217 (p_time 0.97, p_space 0.36); 000660 m:bsts: +0.318 (p_time 0.43, p_space 0.16); 005930 m:enet: +0.305 (p_time 0.85, p_space 0.22); 000660 m:enet: +0.366 (p_time 0.36, p_space 0.13); 005930 m:timesfm_xreg: +0.181 (p_time 1.00, p_space 0.43); 000660 m:timesfm_xreg: +0.151 (p_time 0.85, p_space 0.50); 005930 m:ols: +0.245 (p_time 0.85, p_space 0.31); 000660 m:ols: +0.364 (p_time 0.31, p_space 0.12); 005930 old_stack: +0.232 (p_time 0.97, p_space 0.26); 000660 old_stack: +0.274 (p_time 0.52, p_space 0.19); 005930 stat_simplex: +0.191 (p_time 0.96, p_space 0.36); 000660 stat_simplex: +0.268 (p_time 0.53, p_space 0.19); 005930 simplex_l2|hier: +0.203 (p_time 0.95, p_space 0.35); 000660 simplex_l2|hier: +0.292 (p_time 0.52, p_space 0.16); 005930 simplex_l2|regime_trend: +0.212 (p_time 0.96, p_space 0.31); 000660 simplex_l2|regime_trend: +0.256 (p_time 0.59, p_space 0.20)
+- **해석**: 모든 행에서 유의한 효과 없음. 결론(유의한 규제 효과 미검출) 유지.

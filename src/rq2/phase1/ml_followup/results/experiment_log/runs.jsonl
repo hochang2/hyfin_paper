@@ -1,0 +1,14 @@
+{"time": "2026-11-16 14:06:43", "exp": "exp5", "step": "rv5_space", "rows": 125268, "sec": 134.9}
+{"time": "2026-11-16 14:10:10", "exp": "exp5", "step": "rv5_space", "rows": 125268, "sec": 179.6}
+{"time": "2026-11-16 14:19:15", "exp": "exp5", "step": "gk_space", "rows": 298644, "sec": 545.0}
+{"time": "2026-11-16 20:45:08", "exp": "exp5", "step": "gk_dense", "rows": 132840, "sec": 23153.2}
+{"time": "2026-11-16 21:24:17", "exp": "exp1", "step": "local_pseudo", "rows": 65403, "sec": 1966.6}
+{"time": "2026-11-16 22:15:14", "exp": "exp1", "step": "global_pseudo", "rows": 348848, "sec": 3056.8}
+{"time": "2026-11-16 22:19:24", "exp": "exp1", "step": "global_k", "rows": 24336, "sec": 249.7}
+{"time": "2026-11-16 22:26:23", "exp": "exp1", "step": "global_real", "rows": 44857, "sec": 419.3}
+{"time": "2026-11-17 01:27:38", "exp": "exp6", "step": "sim", "rows": 846720, "sec": 10874.4}
+{"time": "2026-11-17 02:36:52", "exp": "exp4", "step": "rv5_lengths", "rows": 54000, "sec": 4154.8}
+{"time": "2026-11-17 02:43:04", "exp": "exp4", "step": "gk_nt", "rows": 14784, "sec": 371.0}
+{"time": "2026-11-17 04:54:36", "exp": "exp4", "step": "gk_lengths", "rows": 851548, "sec": 7892.7}
+{"time": "2026-11-17 05:14:40", "exp": "exp7", "step": "pools", "rows": 14784, "sec": 1096.7}
+{"time": "2026-11-17 05:20:39", "exp": "exp2", "step": "transfer", "rows": 170016, "sec": 358.4}
