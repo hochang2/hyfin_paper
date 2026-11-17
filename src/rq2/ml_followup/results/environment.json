@@ -1,0 +1,22 @@
+{
+  "recorded": "2026-11-17",
+  "code_base_commit": "8214a77 (rq2; ml_followup 코드는 미커밋 상태에서 실행)",
+  "seed": 20261117,
+  "machine": {"os": "Windows-11-10.0.26200", "cpu_count": 12, "n_jobs": 11, "gpu": null},
+  "analysis_env": {
+    "python": "3.13.5 (py -3.13)",
+    "numpy": "2.4.1", "pandas": "2.2.3", "scikit-learn": "1.8.0",
+    "lightgbm": "4.6.0", "xgboost": "3.3.0", "statsmodels": "0.14.6"
+  },
+  "fm_env": {
+    "python": "3.13.5 (.venv-fm)",
+    "torch": "2.15.0+cpu",
+    "chronos-forecasting": "2.3.2",
+    "timesfm": "3.0.2",
+    "peft": "미설치 (LoRA 미수행)"
+  },
+  "notes": [
+    "2026-11-16 오후 기계 정지로 Exp5 gk_dense / RF 타이밍 왜곡 (실제 비용 아님)",
+    "Exp3 fine-tune: refits [90,150] x 100 step (CPU ~7 s/step), config.yaml fm 항목 참조"
+  ]
+}

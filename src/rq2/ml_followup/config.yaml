@@ -1,0 +1,112 @@
+# RQ2 ML 후속 실험 설정 (src/rq2/ml_followup). 1차 연구(configs/rq2.yaml)·1차 ML 확장(ml_extension/config.yaml)은 읽기만 한다.
+# 값 변경 = 새 실험. 모든 값은 results/experiment_log 에 그대로 남는다.
+
+seed: 20261117
+n_jobs: 11
+cache_dir: data/interim/rq_cache/ml_followup     # 저장소 루트 기준 (Git 제외)
+ext_cache_dir: data/interim/rq_cache/ml_ext      # 1차 ML 확장 캐시 (읽기만, 재사용)
+mktcap_cache: data/interim/rq_cache/rq2f_mktcap.parquet   # proc.stock_daily.mktcap (2015~), 규모 특성용
+
+# ------------------------------------------------------------------ rv5 과제 (1차 확장과 같은 가짜 개입일)
+rv5:
+  codes: ["005930", "000660", "005935"]        # 처치 2 + 음성통제 1
+  first_cutoff: 90
+  cutoff_step: 3
+  last_index_exclusive: 190                    # 2026-07-16 발표일 위치. 가짜 평가창은 이 전에 끝난다
+  max_h: 71
+  donor_eval_n: 40                             # 가짜 개입일 평가에 쓰는 donor 표적 수 (무작위, seed 고정)
+  features: [don_mean, don_pc2, don_pc3, kosdaq_lrv, us_lvix, us_abs_sox, gap_day]   # C_main
+
+windows:
+  h5: [0, 5]
+  h10: [0, 10]
+  h20: [0, 20]
+  h30: [0, 30]
+  h61: [0, 61]
+  transition: [0, 10]
+  post_effective: [10, 71]
+horizons: [h10, h20, h30, h61]                 # RQ2 보고 지평
+
+# ------------------------------------------------------------------ 모형 기본값 (1차 연구와 같은 값)
+models:
+  lgbm: {n_estimators: 300, learning_rate: 0.03, num_leaves: 7, min_child_samples: 15, subsample: 0.8,
+         subsample_freq: 1, colsample_bytree: 0.8, reg_lambda: 1.0}
+  lgbm_deep: {n_estimators: 300, learning_rate: 0.03, num_leaves: 31, min_child_samples: 5, subsample: 0.8,
+              subsample_freq: 1, colsample_bytree: 0.8, reg_lambda: 1.0}
+  xgb: {n_estimators: 300, learning_rate: 0.03, max_depth: 2, subsample: 0.8, colsample_bytree: 0.8, reg_lambda: 1.0}
+  rf: {n_estimators: 200, max_depth: 4, min_samples_leaf: 10, max_features: 0.6}
+  rf_panel: {n_estimators: 200, max_depth: 8, min_samples_leaf: 50, max_features: 0.6}   # 패널(수만 행)용
+  bsts_light: {niter: 1000, burn: 250, expected_model_size: 3, prior_level_sd: 0.01, prior_level_df: 32}
+
+# ------------------------------------------------------------------ 실험 5: 추론 감사
+audit:
+  gk_train_len: 140            # rv5 가짜 개입일 학습 길이(90~186, 평균 138)를 흉내낸 이동창
+  gk_step: 3                   # 조밀 가짜 개입일 (rv5 와 같은 3일 간격)
+  gk_first_date: 2016-06-01
+  gk_models: [naive_mean, did_gap, ols, enet, lgbm, rf, harx, bsts]
+  block_n_cut: 32              # rv5 와 같은 블록: 가짜 개입일 32개, 3일 간격, 마지막 가짜 개입일 + 4일 = '실제' 개입일
+  block_gap: 3                 # rv5 는 마지막 가짜 개입일(186)과 실제(190) 간격 4. 조밀 격자(3일)에서는 3
+  block_slide: 30              # 블록을 30일씩 밀며 반복
+  space_every: 30              # GK space 순열 감사: 30일마다 donor 전체 OLS
+  min_eff: 3
+  power_effects: [-10, -20, -30, -40, -50]
+  bootstrap_reps: 999
+
+# ------------------------------------------------------------------ 실험 1: Global / Pooled
+global:
+  algos: [ridge, enet, lgbm, xgb, rf]
+  unit_features: [u_mu, u_sd, u_beta, u_r2, u_lmcap]
+  adapt: {recal_shrink: 1.0, boost_trees: 60, boost_lr: 0.03, boost_leaves: 4}
+  rowmatch_draws: 3
+
+# ------------------------------------------------------------------ 실험 4: 표본 효율
+sample:
+  rv5_lengths: [45, 60, 90, 130]          # 이동창 길이 (평가 가짜 개입일 >= 130 으로 고정)
+  rv5_eval_first: 130
+  global_k: [5, 10, 25, 50, 100, 175]
+  global_k_draws: 3
+  gk_lengths: [60, 90, 130, 190, 250, 500, 1000, 2000]
+  gk_eval_first_date: 2023-06-01
+  gk_eval_step: 10
+  gk_donor_targets: 30
+  gk_models: [ols, ridge, enet, lgbm, lgbm_deep, xgb, rf, bsts]
+  nt_budgets: [500, 2000, 8000]           # N(종목) × T(일) 행 예산
+  nt_units: [1, 4, 16, 64]
+  tune_trials: 20
+  tune_every: 8
+
+# ------------------------------------------------------------------ 실험 6: DGP 시뮬레이션
+dgp:
+  scenarios: [linear, nonlinear, interaction, volclust, regime, break_shift, spillover]
+  families: [theory, market]
+  train_sizes: [90, 190, 500, 1000]
+  post_len: 61
+  reps: 100
+  effects_pct: [0, -5, -10, -20, -30, -40]
+  hetero_slope: 0.5             # 효과의 상태 의존 기울기 (tau_t = kappa (1 + 0.5 z_t))
+  spill_share: 0.5
+  models: [ols, ridge, enet, bsts, lgbm, xgb, rf]
+
+# ------------------------------------------------------------------ 실험 2: Transfer (GK → rv5)
+transfer:
+  common_features: [don_mean, us_lvix, us_abs_sox, kosdaq_ret_abs]
+  pretrain_lengths: [250, 500, 1000, 0]   # 0 = 2015-06 부터 전부
+  donor_targets: 20
+  boost_trees: 100
+
+# ------------------------------------------------------------------ 실험 7: donor pool
+donor:
+  pools: [all, main, strict, vol_sim, trend_sim, size_sim, industry_plus]
+  k_similar: 40
+  industry_corr_quantile: 0.75  # strict 에서 처치와 사전 수익률 상관 상위 25% 추가 제외
+  models: [ols, bsts, lgbm, global_lgbm]
+
+# ------------------------------------------------------------------ 실험 3: Foundation model 적응
+fm:
+  refits: [90, 150]             # 미세조정 시점 (rv5 위치). 각 모형은 다음 시점 전까지의 가짜 개입일에 쓴다
+                                # (계획 [90,120,150,180]·300 step → CPU 실측 ≈7 s/step 이라 16회×300 step ≈ 10시간 이상 → 축소)
+  steps: 100
+  batch_size: 32
+  context_length: 256
+  lr_full: 1.0e-5
+  lr_lora: 1.0e-4
