@@ -11,6 +11,7 @@
     df = sql("SELECT * FROM hyfin.raw.f11_index WHERE code = ?", ["I.001"])
 
 토큰은 저장소 루트 `.env` 의 `motherduck_token` 에서 읽는다 (docs/database_guide.md 2절).
+사용자 폴더 경로에 한글이 있으면 `.env` 에 `duckdb_home=<영문 경로>` 도 넣는다.
 """
 from __future__ import annotations
 
@@ -57,7 +58,11 @@ def connect(fresh: bool = False) -> duckdb.DuckDBPyConnection:
         raise RuntimeError(f"duckdb {duckdb.__version__} — MotherDuck 은 2.0 미지원. `pip install duckdb==1.5.6`")
 
     _load_env()
-    con = duckdb.connect("md:")
+    # 사용자 폴더 경로에 한글 등 비ASCII 문자가 있으면 MotherDuck 확장을 ~/.duckdb 에 쓰지 못한다.
+    # 그럴 때는 .env 에 `duckdb_home=C:/duckdb_ext` 처럼 영문 경로를 넣는다 (없으면 기본값).
+    home = os.environ.get("duckdb_home")
+    config = {"home_directory": home, "extension_directory": home} if home else {}
+    con = duckdb.connect("md:", config=config)
     names = {r[0] for r in con.sql("SELECT database_name FROM duckdb_databases()").fetchall()}
     if DB not in names:
         con.sql(f"ATTACH '{SHARE_URL}' AS {DB}")

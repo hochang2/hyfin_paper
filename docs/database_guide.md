@@ -22,6 +22,10 @@
    ```
    motherduck_token=<내 토큰>
    ```
+   사용자 폴더 경로에 한글이 있으면 MotherDuck 확장 파일을 `~/.duckdb` 에 쓰지 못해 접속이 실패한다 (`Failed to write extension to ...`). 영문 폴더(예: `C:/duckdb_ext`)를 만들고 한 줄 더 넣는다. `src/common/db.py` 가 이 값을 읽는다.
+   ```
+   duckdb_home=C:/duckdb_ext
+   ```
 4. `py -m pip install "duckdb==1.5.6"`
 5. 공유 DB 붙이기 (한 번만 하면 계정에 남음):
    ```python
