@@ -1,0 +1,207 @@
+# 실험 로그 (experiment_log)
+
+총 25건. 생성: 2026-11-17 12:48
+
+## RQ2-S1-BSTS_005930 [robustness] — ok
+- **목적**: 반사실 bias 민감도: 보정 효과 θ̂−b, 부호·크기·유의성 임계점, 경험적 bias 범위와 비교
+- **데이터**: 주 분석 θ̂ + 기존 placebo 캐시 (GK 238, rv5 32, space 175, GK 차분 237)
+- **모형**: BSTS_005930
+- **설정**: `{"grid": [-0.2, -0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2], "targets_pct": [-5, -10, -20, -30]}`
+- **진단**: {"gk_all": 0.029, "gk_recent": 0.192, "gk_regime": -0.061, "rv5_recent": 0.355, "space_all": -0.022, "space_similar": 0.016, "gk_rolling2y": 0.008}
+- **결과**: {"sign_flip": 0.052, "effect_-5pct": 0.103, "effect_-10pct": 0.157, "effect_-20pct": 0.275, "effect_-30pct": 0.408, "sig_negative_no_se": 0.666, "sig_negative_with_se": 0.675, "sig_positive_with_se": -0.571}
+- **해석**: 시나리오 분석 (보정된 인과효과 아님)
+
+## RQ2-S1-BSTS_000660 [robustness] — ok
+- **목적**: 반사실 bias 민감도: 보정 효과 θ̂−b, 부호·크기·유의성 임계점, 경험적 bias 범위와 비교
+- **데이터**: 주 분석 θ̂ + 기존 placebo 캐시 (GK 238, rv5 32, space 175, GK 차분 237)
+- **모형**: BSTS_000660
+- **설정**: `{"grid": [-0.2, -0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2], "targets_pct": [-5, -10, -20, -30]}`
+- **진단**: {"gk_all": 0.013, "gk_recent": 0.067, "gk_regime": -0.114, "rv5_recent": 0.058, "space_all": -0.022, "space_similar": -0.045, "gk_rolling2y": 0.007}
+- **결과**: {"sign_flip": -0.053, "effect_-5pct": -0.002, "effect_-10pct": 0.052, "effect_-20pct": 0.17, "effect_-30pct": 0.303, "sig_negative_no_se": 0.561, "sig_negative_with_se": 0.568, "sig_positive_with_se": -0.674}
+- **해석**: 시나리오 분석 (보정된 인과효과 아님)
+
+## RQ2-S1-DIFF_005930 [robustness] — ok
+- **목적**: 반사실 bias 민감도: 보정 효과 θ̂−b, 부호·크기·유의성 임계점, 경험적 bias 범위와 비교
+- **데이터**: 주 분석 θ̂ + 기존 placebo 캐시 (GK 238, rv5 32, space 175, GK 차분 237)
+- **모형**: DIFF_005930
+- **설정**: `{"grid": [-0.2, -0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2], "targets_pct": [-5, -10, -20, -30]}`
+- **진단**: {"gk_diff_long": 0.011, "gk_diff_simple": -0.002, "rv5_diff_simple": 0.062, "gk_rolling2y": 0.026}
+- **결과**: {"sign_flip": 0.024, "effect_-5pct": 0.075, "effect_-10pct": 0.129, "effect_-20pct": 0.247, "effect_-30pct": 0.381, "sig_negative_no_se": 0.352, "sig_negative_with_se": 0.356, "sig_positive_with_se": -0.308}
+- **해석**: 시나리오 분석 (보정된 인과효과 아님)
+
+## RQ2-S1-SIMPLEX_005930 [robustness] — ok
+- **목적**: 반사실 bias 민감도: 보정 효과 θ̂−b, 부호·크기·유의성 임계점, 경험적 bias 범위와 비교
+- **데이터**: 주 분석 θ̂ + 기존 placebo 캐시 (GK 238, rv5 32, space 175, GK 차분 237)
+- **모형**: SIMPLEX_005930
+- **설정**: `{"grid": [-0.2, -0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2], "targets_pct": [-5, -10, -20, -30]}`
+- **진단**: {"gk_all": 0.035, "gk_recent": 0.207, "gk_regime": -0.05, "rv5_recent": 0.343, "space_all": -0.013, "space_similar": 0.024, "gk_rolling2y": 0.013}
+- **결과**: {"sign_flip": 0.064, "effect_-5pct": 0.115, "effect_-10pct": 0.169, "effect_-20pct": 0.287, "effect_-30pct": 0.421, "sig_negative_no_se": 0.664, "sig_negative_with_se": 0.673, "sig_positive_with_se": -0.545}
+- **해석**: 시나리오 분석 (보정된 인과효과 아님)
+
+## RQ2-S1-SIMPLEX_000660 [robustness] — ok
+- **목적**: 반사실 bias 민감도: 보정 효과 θ̂−b, 부호·크기·유의성 임계점, 경험적 bias 범위와 비교
+- **데이터**: 주 분석 θ̂ + 기존 placebo 캐시 (GK 238, rv5 32, space 175, GK 차분 237)
+- **모형**: SIMPLEX_000660
+- **설정**: `{"grid": [-0.2, -0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15, 0.2], "targets_pct": [-5, -10, -20, -30]}`
+- **진단**: {"gk_all": 0.018, "gk_recent": 0.072, "gk_regime": -0.098, "rv5_recent": 0.05, "space_all": -0.013, "space_similar": -0.039, "gk_rolling2y": 0.012}
+- **결과**: {"sign_flip": -0.039, "effect_-5pct": 0.013, "effect_-10pct": 0.067, "effect_-20pct": 0.185, "effect_-30pct": 0.318, "sig_negative_no_se": 0.561, "sig_negative_with_se": 0.568, "sig_positive_with_se": -0.645}
+- **해석**: 시나리오 분석 (보정된 인과효과 아님)
+
+## RQ2-S1-VAL [diagnostic] — ok
+- **목적**: 온라인 bias 보정의 별도 기간(2022~) 검증
+- **데이터**: GK 가짜 개입일
+- **모형**: none/expanding/rolling2y/shrink/regime
+- **설정**: `{"start": "2022-01-01", "shrink_kappa": 10}`
+- **결과**: [{"design": "BSTS_005930", "method": "none", "rmse_ratio_vs_none": 1.0, "coverage95_with_se": 1.0}, {"design": "BSTS_005930", "method": "expanding", "rmse_ratio_vs_none": 1.018, "coverage95_with_se": 1.0}, {"design": "BSTS_005930", "method": "rolling2y", "rmse_ratio_vs_none": 1.023, "coverage95_with_se": 1.0}, {"design": "BSTS_005930", "method": "shrink", "rmse_ratio_vs_none": 1.013, "coverage95_with_se": 1.0}, {"design": "BSTS_005930", "method": "regime", "rmse_ratio_vs_none": 1.068, "coverage95_with_se": 0.99}, {"design": "BSTS_000660", "method": "none", "rmse_ratio_vs_none": 1.0, "coverage95_with_se": 0.97}, {"design": "BSTS_000660", "method": "expanding", "rmse_ratio_vs_none": 1.019, "coverage95_with_se": 0.97}, {"design": "BSTS_000660", "method": "rolling2y", "rmse_ratio_vs_none": 1.174, "coverage95_with_se": 0.97}, {"design": "BSTS_000660", "method": "shrink", "rmse_ratio_vs_none": 1.014, "coverage95_with_se": 0.97}, {"design": "BSTS_000660", "method": "regime", "rmse_ratio_vs_none": 0.997, "coverage95_with_se": 0.98}, {"design": "SIMPLEX_005930", "method": "none", "rmse_ratio_vs_none": 1.0, "coverage95_with_se": 0.97}, {"design": "SIMPLEX_005930", "method": "expanding", "rmse_ratio_vs_none": 1.019, "coverage95_with_se": 0.97}, {"design": "SIMPLEX_005930", "method": "rolling2y", "rmse_ratio_vs_none": 1.025, "coverage95_with_se": 0.99}, {"design": "SIMPLEX_005930", "method": "shrink", "rmse_ratio_vs_none": 1.012, "coverage95_with_se": 0.97}, {"design": "SIMPLEX_005930", "method": "regime", "rmse_ratio_vs_none": 1.046, "coverage95_with_se": 0.97}, {"design": "SIMPLEX_000660", "method": "none", "rmse_ratio_vs_none": 1.0, "coverage95_with_se": 0.97}, {"design": "SIMPLEX_000660", "method": "expanding", "rmse_ratio_vs_none": 1.015, "coverage95_with_se": 0.97}, {"design": "SIMPLEX_000660", "method": "rolling2y", "rmse_ratio_vs_none": 1.155, "coverage95_with_se": 0.95}, {"design": "SIMPLEX_000660", "method": "shrink", "rmse_ratio_vs_none": 1.011, "coverage95_with_se": 0.97}, {"design": "SIMPLEX_000660", "method": "regime", "rmse_ratio_vs_none": 0.999, "coverage95_with_se": 0.97}, {"design": "BSTS_005935", "method": "none", "rmse_ratio_vs_none": 1.0, "coverage95_with_se": 1.0}, {"design": "BSTS_005935", "method": "expanding", "rmse_ratio_vs_none": 1.102, "coverage95_with_se": 1.0}, {"design": "BSTS_005935", "method": "rolling2y", "rmse_ratio_vs_none": 0.993, "coverage95_with_se": 1.0}, {"design": "BSTS_005935", "method": "shrink", "rmse_ratio_vs_none": 1.07, "coverage95_with_se": 1.0}, {"design": "BSTS_005935", "method": "regime", "rmse_ratio_vs_none": 1.165, "coverage95_with_se": 1.0}, {"design": "DIFF_005930", "method": "none", "rmse_ratio_vs_none": 1.0, "coverage95_with_se": 1.0}, {"design": "DIFF_005930", "method": "expanding", "rmse_ratio_vs_none": 1.291, "coverage95_with_se": 1.0}, {"design": "DIFF_005930", "method": "rolling2y", "rmse_ratio_vs_none": 0.933, "coverage95_with_se": 1.0}, {"design": "DIFF_005930", "method": "shrink", "rmse_ratio_vs_none": 1.205, "coverage95_with_se": 1.0}]
+
+## RQ2-S2-BSTS_000660 [robustness] — ok
+- **목적**: 통제 오염(spillover) 시 감쇠·부호·검정력. 0 근처 추정에 필요한 오염 강도
+- **데이터**: rv5 주 분석 표본, C_main 통제
+- **모형**: BSTS_000660
+- **설정**: `{"shares": [0.0, 0.1, 0.25, 0.5, 0.75, 1.0], "unit_shock": -0.2, "scenarios": ["A_mean_only", "A2_donor_all", "B_kosdaq", "C_joint", "D_partial30", "E_factor"]}`
+- **진단**: {"linearity_max_absdiff_A": 0.00017941929609599505, "refit_max_absdiff": 1.7941929609938123e-05}
+- **결과**: {"A_mean_only": 0.537, "A2_donor_all": 0.63, "B_kosdaq": 0.248, "C_joint": 0.875, "D_partial30": 0.283, "E_factor": 0.666}
+- **해석**: τ=0 검정은 s 에 무관 (FPR 불변); 크기·검정력만 감쇠
+
+## RQ2-S2-BSTS_005930 [robustness] — ok
+- **목적**: 통제 오염(spillover) 시 감쇠·부호·검정력. 0 근처 추정에 필요한 오염 강도
+- **데이터**: rv5 주 분석 표본, C_main 통제
+- **모형**: BSTS_005930
+- **설정**: `{"shares": [0.0, 0.1, 0.25, 0.5, 0.75, 1.0], "unit_shock": -0.2, "scenarios": ["A_mean_only", "A2_donor_all", "B_kosdaq", "C_joint", "D_partial30", "E_factor"]}`
+- **진단**: {"linearity_max_absdiff_A": 0.00017941929609599505, "refit_max_absdiff": 1.7941929609938123e-05}
+- **결과**: {"A_mean_only": 0.858, "A2_donor_all": 0.854, "B_kosdaq": 0.267, "C_joint": 1.122, "D_partial30": 0.26, "E_factor": 0.88}
+- **해석**: τ=0 검정은 s 에 무관 (FPR 불변); 크기·검정력만 감쇠
+
+## RQ2-S2-DIFF_005930 [robustness] — ok
+- **목적**: 통제 오염(spillover) 시 감쇠·부호·검정력. 0 근처 추정에 필요한 오염 강도
+- **데이터**: rv5 주 분석 표본, C_main 통제
+- **모형**: DIFF_005930
+- **설정**: `{"shares": [0.0, 0.1, 0.25, 0.5, 0.75, 1.0], "unit_shock": -0.2, "scenarios": ["A_mean_only", "A2_donor_all", "B_kosdaq", "C_joint", "D_partial30", "E_factor"]}`
+- **진단**: {"linearity_max_absdiff_A": 0.00017941929609599505, "refit_max_absdiff": 1.7941929609938123e-05}
+- **결과**: {"A_mean_only": 0.0, "A2_donor_all": 0.0, "B_kosdaq": 0.0, "C_joint": 0.0, "D_partial30": 0.0, "E_factor": 0.0, "F_negctrl_005935": 1.0}
+- **해석**: τ=0 검정은 s 에 무관 (FPR 불변); 크기·검정력만 감쇠
+
+## RQ2-S2-SIMPLEX_000660 [robustness] — ok
+- **목적**: 통제 오염(spillover) 시 감쇠·부호·검정력. 0 근처 추정에 필요한 오염 강도
+- **데이터**: rv5 주 분석 표본, C_main 통제
+- **모형**: SIMPLEX_000660
+- **설정**: `{"shares": [0.0, 0.1, 0.25, 0.5, 0.75, 1.0], "unit_shock": -0.2, "scenarios": ["A_mean_only", "A2_donor_all", "B_kosdaq", "C_joint", "D_partial30", "E_factor"]}`
+- **진단**: {"linearity_max_absdiff_A": 0.00017941929609599505, "refit_max_absdiff": 1.7941929609938123e-05}
+- **결과**: {"A_mean_only": 0.52, "A2_donor_all": 0.624, "B_kosdaq": 0.232, "C_joint": 0.855, "D_partial30": 0.296, "E_factor": 0.66}
+- **해석**: τ=0 검정은 s 에 무관 (FPR 불변); 크기·검정력만 감쇠
+
+## RQ2-S2-SIMPLEX_005930 [robustness] — ok
+- **목적**: 통제 오염(spillover) 시 감쇠·부호·검정력. 0 근처 추정에 필요한 오염 강도
+- **데이터**: rv5 주 분석 표본, C_main 통제
+- **모형**: SIMPLEX_005930
+- **설정**: `{"shares": [0.0, 0.1, 0.25, 0.5, 0.75, 1.0], "unit_shock": -0.2, "scenarios": ["A_mean_only", "A2_donor_all", "B_kosdaq", "C_joint", "D_partial30", "E_factor"]}`
+- **진단**: {"linearity_max_absdiff_A": 0.00017941929609599505, "refit_max_absdiff": 1.7941929609938123e-05}
+- **결과**: {"A_mean_only": 0.836, "A2_donor_all": 0.834, "B_kosdaq": 0.271, "C_joint": 1.106, "D_partial30": 0.252, "E_factor": 0.866}
+- **해석**: τ=0 검정은 s 에 무관 (FPR 불변); 크기·검정력만 감쇠
+
+## RQ2-S3-DIFF [robustness] — ok
+- **목적**: 같은 기업 차분의 차별적 충격 임계점
+- **데이터**: rv5 d=005930−005935, GK 2015~ 차분
+- **모형**: HAC DID (상장기간 대비)
+- **설정**: `{"listing_days": 34}`
+- **진단**: {"market_delta": [{"control": "don_mean", "delta_mkt": 0.159}, {"control": "kosdaq_lrv", "delta_mkt": 0.119}, {"control": "don_mean (GK 2015~, 장기 γ)", "delta_mkt": 0.102}], "with_controls": [{"spec": "주 분석 (gap_day)", "theta": 0.024}, {"spec": "+ don_mean", "theta": -0.007}, {"spec": "+ kosdaq_lrv", "theta": 0.012}, {"spec": "+ don_mean, kosdaq_lrv, us_lvix", "theta": -0.014}]}
+- **결과**: [{"tipping": "sign_flip", "delta_needed": 0.024, "P_hist_gk_simple(D>=δ)": 0.451}, {"tipping": "effect_-5pct", "delta_needed": 0.075, "P_hist_gk_simple(D>=δ)": 0.351}, {"tipping": "effect_-10pct", "delta_needed": 0.129, "P_hist_gk_simple(D>=δ)": 0.263}, {"tipping": "effect_-20pct", "delta_needed": 0.247, "P_hist_gk_simple(D>=δ)": 0.099}, {"tipping": "effect_-30pct", "delta_needed": 0.381, "P_hist_gk_simple(D>=δ)": 0.014}, {"tipping": "sig_negative", "delta_needed": 0.352, "P_hist_gk_simple(D>=δ)": 0.025}]
+
+## RQ2-S3-BSTS [robustness] — ok
+- **목적**: BSTS 숨은 교란 모양별 필요 크기 + LOCO 기준
+- **데이터**: rv5 주 분석 표본
+- **모형**: BSTS 주 설정 (LOCO 14회 재적합) + OLS
+- **설정**: `{"shapes": ["constant", "temporary", "growing", "market_interaction"]}`
+- **진단**: [{"code": "005930", "dropped": "don_mean", "delta": -0.252}, {"code": "005930", "dropped": "don_pc2", "delta": 0.003}, {"code": "005930", "dropped": "don_pc3", "delta": -0.006}, {"code": "005930", "dropped": "kosdaq_lrv", "delta": 0.151}, {"code": "005930", "dropped": "us_lvix", "delta": 0.014}, {"code": "005930", "dropped": "us_abs_sox", "delta": -0.004}, {"code": "005930", "dropped": "gap_day", "delta": -0.001}, {"code": "000660", "dropped": "don_mean", "delta": -0.129}, {"code": "000660", "dropped": "don_pc2", "delta": -0.054}, {"code": "000660", "dropped": "don_pc3", "delta": 0.002}, {"code": "000660", "dropped": "kosdaq_lrv", "delta": 0.145}, {"code": "000660", "dropped": "us_lvix", "delta": -0.005}, {"code": "000660", "dropped": "us_abs_sox", "delta": -0.011}, {"code": "000660", "dropped": "gap_day", "delta": -0.002}]
+- **결과**: [{"design": "BSTS_005930", "tipping": "sign_flip", "meanU_needed": 0.052, "multiple_of_strongest_control": 0.205}, {"design": "BSTS_005930", "tipping": "effect_-5pct", "meanU_needed": 0.103, "multiple_of_strongest_control": 0.408}, {"design": "BSTS_005930", "tipping": "effect_-10pct", "meanU_needed": 0.157, "multiple_of_strongest_control": 0.623}, {"design": "BSTS_005930", "tipping": "effect_-20pct", "meanU_needed": 0.275, "multiple_of_strongest_control": 1.089}, {"design": "BSTS_005930", "tipping": "effect_-30pct", "meanU_needed": 0.408, "multiple_of_strongest_control": 1.618}, {"design": "BSTS_005930", "tipping": "sig_negative", "meanU_needed": 0.666, "multiple_of_strongest_control": 2.64}, {"design": "BSTS_000660", "tipping": "sign_flip", "meanU_needed": -0.053, "multiple_of_strongest_control": 0.368}, {"design": "BSTS_000660", "tipping": "effect_-5pct", "meanU_needed": -0.002, "multiple_of_strongest_control": 0.013}, {"design": "BSTS_000660", "tipping": "effect_-10pct", "meanU_needed": 0.052, "multiple_of_strongest_control": 0.361}, {"design": "BSTS_000660", "tipping": "effect_-20pct", "meanU_needed": 0.17, "multiple_of_strongest_control": 1.176}, {"design": "BSTS_000660", "tipping": "effect_-30pct", "meanU_needed": 0.303, "multiple_of_strongest_control": 2.1}, {"design": "BSTS_000660", "tipping": "sig_negative", "meanU_needed": 0.561, "multiple_of_strongest_control": 3.884}]
+- **해석**: Oster/Cinelli-Hazlett 는 BSTS 에 기계적으로 적용하지 않음 (OLS 참고값만)
+
+## RQ2-S4-BSTS_000660 [robustness] — ok
+- **목적**: 사건일·창 민감도 (사전 등록 아님)
+- **데이터**: ml_ext space 일별 캐시 / rv5·GK 차분
+- **모형**: BSTS_000660
+- **설정**: `{"windows": [5, 10, 20, 30, 61], "donut": ["2026-07-28", "2026-08-04"], "simplex_weights": {"bsts": 0.377, "ols": 0.48, "uc": 0.143}}`
+- **진단**: {"mde_pct": [{"window": "transition (07-16~07-30)", "mde_pct": -49.045}, {"window": "post_effective 61일 (주 분석)", "mde_pct": -58.554}, {"window": "시행 후 5일", "mde_pct": -61.085}, {"window": "시행 후 10일", "mde_pct": -59.737}, {"window": "시행 후 20일", "mde_pct": -59.636}, {"window": "시행 후 30일 (= 전반 1~30일)", "mde_pct": -60.951}, {"window": "시행 후 31~61일 (후반)", "mde_pct": -60.628}, {"window": "transition − 07-28 제외", "mde_pct": -48.824}, {"window": "announce~effective 전체 − 07-28 제외", "mde_pct": -55.353}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "mde_pct": -59.368}, {"window": "프리미엄 규정 08-19 이후", "mde_pct": -61.21}, {"window": "조기시행 공지 07-24 이후", "mde_pct": -56.792}, {"window": "구간: 발표~조기공지", "mde_pct": -50.985}, {"window": "구간: 조기공지~시행", "mde_pct": -57.339}, {"window": "구간: 시행~추가조치", "mde_pct": -78.525}, {"window": "구간: 추가조치~원시행일", "mde_pct": -68.092}, {"window": "구간: 원시행일~프리미엄", "mde_pct": -62.433}, {"window": "구간: 프리미엄 이후", "mde_pct": -61.21}]}
+- **결과**: [{"window": "transition (07-16~07-30)", "pct": 37.414, "p": 0.17, "p_holm": NaN, "p_maxT": 0.636}, {"window": "post_effective 61일 (주 분석)", "pct": -5.287, "p": 0.852, "p_holm": NaN, "p_maxT": 1.0}, {"window": "시행 후 5일", "pct": 23.73, "p": 0.511, "p_holm": 1.0, "p_maxT": 0.966}, {"window": "시행 후 10일", "pct": 24.039, "p": 0.494, "p_holm": 1.0, "p_maxT": 0.966}, {"window": "시행 후 20일", "pct": 14.979, "p": 0.682, "p_holm": 1.0, "p_maxT": 0.994}, {"window": "시행 후 30일 (= 전반 1~30일)", "pct": 0.677, "p": 0.989, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "시행 후 31~61일 (후반)", "pct": -10.723, "p": 0.716, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "transition − 07-28 제외", "pct": 41.585, "p": 0.131, "p_holm": 1.0, "p_maxT": 0.562}, {"window": "announce~effective 전체 − 07-28 제외", "pct": -0.262, "p": 0.977, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "pct": -7.337, "p": 0.807, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "프리미엄 규정 08-19 이후", "pct": -10.753, "p": 0.688, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "조기시행 공지 07-24 이후", "pct": -1.572, "p": 0.949, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 발표~조기공지", "pct": 19.976, "p": 0.455, "p_holm": 1.0, "p_maxT": 0.96}, {"window": "구간: 조기공지~시행", "pct": 57.387, "p": 0.165, "p_holm": 1.0, "p_maxT": 0.545}, {"window": "구간: 시행~추가조치", "pct": 67.16, "p": 0.312, "p_holm": 1.0, "p_maxT": 0.847}, {"window": "구간: 추가조치~원시행일", "pct": 34.451, "p": 0.472, "p_holm": 1.0, "p_maxT": 0.949}, {"window": "구간: 원시행일~프리미엄", "pct": 13.691, "p": 0.682, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 프리미엄 이후", "pct": -10.753, "p": 0.688, "p_holm": 1.0, "p_maxT": 1.0}]
+
+## RQ2-S4-BSTS_005930 [robustness] — ok
+- **목적**: 사건일·창 민감도 (사전 등록 아님)
+- **데이터**: ml_ext space 일별 캐시 / rv5·GK 차분
+- **모형**: BSTS_005930
+- **설정**: `{"windows": [5, 10, 20, 30, 61], "donut": ["2026-07-28", "2026-08-04"], "simplex_weights": {"bsts": 0.377, "ols": 0.48, "uc": 0.143}}`
+- **진단**: {"mde_pct": [{"window": "transition (07-16~07-30)", "mde_pct": -49.045}, {"window": "post_effective 61일 (주 분석)", "mde_pct": -58.554}, {"window": "시행 후 5일", "mde_pct": -61.085}, {"window": "시행 후 10일", "mde_pct": -59.737}, {"window": "시행 후 20일", "mde_pct": -59.636}, {"window": "시행 후 30일 (= 전반 1~30일)", "mde_pct": -60.951}, {"window": "시행 후 31~61일 (후반)", "mde_pct": -60.628}, {"window": "transition − 07-28 제외", "mde_pct": -48.824}, {"window": "announce~effective 전체 − 07-28 제외", "mde_pct": -55.353}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "mde_pct": -59.368}, {"window": "프리미엄 규정 08-19 이후", "mde_pct": -61.21}, {"window": "조기시행 공지 07-24 이후", "mde_pct": -56.792}, {"window": "구간: 발표~조기공지", "mde_pct": -50.985}, {"window": "구간: 조기공지~시행", "mde_pct": -57.339}, {"window": "구간: 시행~추가조치", "mde_pct": -78.525}, {"window": "구간: 추가조치~원시행일", "mde_pct": -68.092}, {"window": "구간: 원시행일~프리미엄", "mde_pct": -62.433}, {"window": "구간: 프리미엄 이후", "mde_pct": -61.21}]}
+- **결과**: [{"window": "transition (07-16~07-30)", "pct": 24.273, "p": 0.347, "p_holm": NaN, "p_maxT": 0.869}, {"window": "post_effective 61일 (주 분석)", "pct": 6.234, "p": 0.847, "p_holm": NaN, "p_maxT": 1.0}, {"window": "시행 후 5일", "pct": 21.574, "p": 0.54, "p_holm": 1.0, "p_maxT": 0.977}, {"window": "시행 후 10일", "pct": 23.387, "p": 0.5, "p_holm": 1.0, "p_maxT": 0.966}, {"window": "시행 후 20일", "pct": 20.539, "p": 0.585, "p_holm": 1.0, "p_maxT": 0.972}, {"window": "시행 후 30일 (= 전반 1~30일)", "pct": 1.617, "p": 0.977, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "시행 후 31~61일 (후반)", "pct": 10.901, "p": 0.744, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "transition − 07-28 제외", "pct": 18.682, "p": 0.466, "p_holm": 1.0, "p_maxT": 0.966}, {"window": "announce~effective 전체 − 07-28 제외", "pct": 7.758, "p": 0.767, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "pct": 4.818, "p": 0.858, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "프리미엄 규정 08-19 이후", "pct": 3.35, "p": 0.932, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "조기시행 공지 07-24 이후", "pct": 8.725, "p": 0.761, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 발표~조기공지", "pct": 7.062, "p": 0.767, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 조기공지~시행", "pct": 44.252, "p": 0.21, "p_holm": 1.0, "p_maxT": 0.705}, {"window": "구간: 시행~추가조치", "pct": 117.761, "p": 0.114, "p_holm": 1.0, "p_maxT": 0.562}, {"window": "구간: 추가조치~원시행일", "pct": 9.502, "p": 0.812, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 원시행일~프리미엄", "pct": 13.181, "p": 0.688, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 프리미엄 이후", "pct": 3.35, "p": 0.932, "p_holm": 1.0, "p_maxT": 1.0}]
+
+## RQ2-S4-DIFF_005930 [robustness] — ok
+- **목적**: 사건일·창 민감도 (사전 등록 아님)
+- **데이터**: ml_ext space 일별 캐시 / rv5·GK 차분
+- **모형**: DIFF_005930
+- **설정**: `{"windows": [5, 10, 20, 30, 61], "donut": ["2026-07-28", "2026-08-04"], "simplex_weights": {"bsts": 0.377, "ols": 0.48, "uc": 0.143}}`
+- **진단**: {"mde_pct": [{"window": "transition (07-16~07-30)", "mde_pct": -55.619}, {"window": "post_effective 61일 (주 분석)", "mde_pct": -42.106}, {"window": "시행 후 5일", "mde_pct": -65.477}, {"window": "시행 후 10일", "mde_pct": -56.233}, {"window": "시행 후 20일", "mde_pct": -48.889}, {"window": "시행 후 30일 (= 전반 1~30일)", "mde_pct": -45.252}, {"window": "시행 후 31~61일 (후반)", "mde_pct": -47.466}, {"window": "transition − 07-28 제외", "mde_pct": -56.812}, {"window": "announce~effective 전체 − 07-28 제외", "mde_pct": -41.068}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "mde_pct": -42.458}, {"window": "프리미엄 규정 08-19 이후", "mde_pct": -43.509}, {"window": "조기시행 공지 07-24 이후", "mde_pct": -41.561}, {"window": "구간: 발표~조기공지", "mde_pct": -65.104}, {"window": "구간: 조기공지~시행", "mde_pct": -65.397}, {"window": "구간: 시행~추가조치", "mde_pct": -86.972}, {"window": "구간: 추가조치~원시행일", "mde_pct": -78.338}, {"window": "구간: 원시행일~프리미엄", "mde_pct": -57.679}, {"window": "구간: 프리미엄 이후", "mde_pct": -43.509}]}
+- **결과**: [{"window": "transition (07-16~07-30)", "pct": 2.374, "p": 0.938, "p_holm": NaN, "p_maxT": 1.0}, {"window": "post_effective 61일 (주 분석)", "pct": 1.877, "p": 0.919, "p_holm": NaN, "p_maxT": 1.0}, {"window": "시행 후 5일", "pct": 51.965, "p": 0.256, "p_holm": 1.0, "p_maxT": 0.852}, {"window": "시행 후 10일", "pct": 43.843, "p": 0.218, "p_holm": 1.0, "p_maxT": 0.774}, {"window": "시행 후 20일", "pct": 14.04, "p": 0.554, "p_holm": 1.0, "p_maxT": 0.998}, {"window": "시행 후 30일 (= 전반 1~30일)", "pct": 17.357, "p": 0.417, "p_holm": 1.0, "p_maxT": 0.98}, {"window": "시행 후 31~61일 (후반)", "pct": -11.157, "p": 0.622, "p_holm": 1.0, "p_maxT": 0.999}, {"window": "transition − 07-28 제외", "pct": 2.03, "p": 0.953, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "announce~effective 전체 − 07-28 제외", "pct": 1.897, "p": 0.908, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "pct": 0.244, "p": 0.99, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "프리미엄 규정 08-19 이후", "pct": -5.82, "p": 0.748, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "조기시행 공지 07-24 이후", "pct": 1.226, "p": 0.946, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 발표~조기공지", "pct": 11.95, "p": 0.754, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 조기공지~시행", "pct": -6.382, "p": 0.855, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 시행~추가조치", "pct": 14.12, "p": 0.846, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 추가조치~원시행일", "pct": 53.772, "p": 0.415, "p_holm": 1.0, "p_maxT": 0.973}, {"window": "구간: 원시행일~프리미엄", "pct": 40.807, "p": 0.262, "p_holm": 1.0, "p_maxT": 0.846}, {"window": "구간: 프리미엄 이후", "pct": -5.82, "p": 0.748, "p_holm": 1.0, "p_maxT": 1.0}]
+
+## RQ2-S4-SIMPLEX_000660 [robustness] — ok
+- **목적**: 사건일·창 민감도 (사전 등록 아님)
+- **데이터**: ml_ext space 일별 캐시 / rv5·GK 차분
+- **모형**: SIMPLEX_000660
+- **설정**: `{"windows": [5, 10, 20, 30, 61], "donut": ["2026-07-28", "2026-08-04"], "simplex_weights": {"bsts": 0.377, "ols": 0.48, "uc": 0.143}}`
+- **진단**: {"mde_pct": [{"window": "transition (07-16~07-30)", "mde_pct": -47.71}, {"window": "post_effective 61일 (주 분석)", "mde_pct": -57.961}, {"window": "시행 후 5일", "mde_pct": -60.209}, {"window": "시행 후 10일", "mde_pct": -58.904}, {"window": "시행 후 20일", "mde_pct": -58.907}, {"window": "시행 후 30일 (= 전반 1~30일)", "mde_pct": -60.285}, {"window": "시행 후 31~61일 (후반)", "mde_pct": -60.188}, {"window": "transition − 07-28 제외", "mde_pct": -47.794}, {"window": "announce~effective 전체 − 07-28 제외", "mde_pct": -54.683}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "mde_pct": -58.804}, {"window": "프리미엄 규정 08-19 이후", "mde_pct": -60.67}, {"window": "조기시행 공지 07-24 이후", "mde_pct": -56.147}, {"window": "구간: 발표~조기공지", "mde_pct": -50.648}, {"window": "구간: 조기공지~시행", "mde_pct": -55.777}, {"window": "구간: 시행~추가조치", "mde_pct": -78.105}, {"window": "구간: 추가조치~원시행일", "mde_pct": -67.813}, {"window": "구간: 원시행일~프리미엄", "mde_pct": -61.943}, {"window": "구간: 프리미엄 이후", "mde_pct": -60.67}]}
+- **결과**: [{"window": "transition (07-16~07-30)", "pct": 35.217, "p": 0.148, "p_holm": NaN, "p_maxT": 0.648}, {"window": "post_effective 61일 (주 분석)", "pct": -3.784, "p": 0.909, "p_holm": NaN, "p_maxT": 1.0}, {"window": "시행 후 5일", "pct": 26.503, "p": 0.438, "p_holm": 1.0, "p_maxT": 0.955}, {"window": "시행 후 10일", "pct": 27.012, "p": 0.438, "p_holm": 1.0, "p_maxT": 0.938}, {"window": "시행 후 20일", "pct": 18.451, "p": 0.631, "p_holm": 1.0, "p_maxT": 0.983}, {"window": "시행 후 30일 (= 전반 1~30일)", "pct": 3.644, "p": 0.915, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "시행 후 31~61일 (후반)", "pct": -10.465, "p": 0.733, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "transition − 07-28 제외", "pct": 41.332, "p": 0.131, "p_holm": 1.0, "p_maxT": 0.54}, {"window": "announce~effective 전체 − 07-28 제외", "pct": 1.092, "p": 0.972, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "pct": -5.947, "p": 0.824, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "프리미엄 규정 08-19 이후", "pct": -9.611, "p": 0.756, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "조기시행 공지 07-24 이후", "pct": -0.561, "p": 0.989, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 발표~조기공지", "pct": 23.013, "p": 0.398, "p_holm": 1.0, "p_maxT": 0.909}, {"window": "구간: 조기공지~시행", "pct": 48.63, "p": 0.182, "p_holm": 1.0, "p_maxT": 0.614}, {"window": "구간: 시행~추가조치", "pct": 60.604, "p": 0.386, "p_holm": 1.0, "p_maxT": 0.903}, {"window": "구간: 추가조치~원시행일", "pct": 43.998, "p": 0.364, "p_holm": 1.0, "p_maxT": 0.875}, {"window": "구간: 원시행일~프리미엄", "pct": 16.769, "p": 0.659, "p_holm": 1.0, "p_maxT": 0.989}, {"window": "구간: 프리미엄 이후", "pct": -9.611, "p": 0.756, "p_holm": 1.0, "p_maxT": 1.0}]
+
+## RQ2-S4-SIMPLEX_005930 [robustness] — ok
+- **목적**: 사건일·창 민감도 (사전 등록 아님)
+- **데이터**: ml_ext space 일별 캐시 / rv5·GK 차분
+- **모형**: SIMPLEX_005930
+- **설정**: `{"windows": [5, 10, 20, 30, 61], "donut": ["2026-07-28", "2026-08-04"], "simplex_weights": {"bsts": 0.377, "ols": 0.48, "uc": 0.143}}`
+- **진단**: {"mde_pct": [{"window": "transition (07-16~07-30)", "mde_pct": -47.71}, {"window": "post_effective 61일 (주 분석)", "mde_pct": -57.961}, {"window": "시행 후 5일", "mde_pct": -60.209}, {"window": "시행 후 10일", "mde_pct": -58.904}, {"window": "시행 후 20일", "mde_pct": -58.907}, {"window": "시행 후 30일 (= 전반 1~30일)", "mde_pct": -60.285}, {"window": "시행 후 31~61일 (후반)", "mde_pct": -60.188}, {"window": "transition − 07-28 제외", "mde_pct": -47.794}, {"window": "announce~effective 전체 − 07-28 제외", "mde_pct": -54.683}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "mde_pct": -58.804}, {"window": "프리미엄 규정 08-19 이후", "mde_pct": -60.67}, {"window": "조기시행 공지 07-24 이후", "mde_pct": -56.147}, {"window": "구간: 발표~조기공지", "mde_pct": -50.648}, {"window": "구간: 조기공지~시행", "mde_pct": -55.777}, {"window": "구간: 시행~추가조치", "mde_pct": -78.105}, {"window": "구간: 추가조치~원시행일", "mde_pct": -67.813}, {"window": "구간: 원시행일~프리미엄", "mde_pct": -61.943}, {"window": "구간: 프리미엄 이후", "mde_pct": -60.67}]}
+- **결과**: [{"window": "transition (07-16~07-30)", "pct": 23.311, "p": 0.352, "p_holm": NaN, "p_maxT": 0.898}, {"window": "post_effective 61일 (주 분석)", "pct": 6.596, "p": 0.818, "p_holm": NaN, "p_maxT": 1.0}, {"window": "시행 후 5일", "pct": 21.221, "p": 0.523, "p_holm": 1.0, "p_maxT": 0.972}, {"window": "시행 후 10일", "pct": 23.657, "p": 0.489, "p_holm": 1.0, "p_maxT": 0.966}, {"window": "시행 후 20일", "pct": 21.214, "p": 0.597, "p_holm": 1.0, "p_maxT": 0.972}, {"window": "시행 후 30일 (= 전반 1~30일)", "pct": 2.085, "p": 0.96, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "시행 후 31~61일 (후반)", "pct": 11.151, "p": 0.75, "p_holm": 1.0, "p_maxT": 0.994}, {"window": "transition − 07-28 제외", "pct": 18.793, "p": 0.46, "p_holm": 1.0, "p_maxT": 0.96}, {"window": "announce~effective 전체 − 07-28 제외", "pct": 8.091, "p": 0.744, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "donut: 61일 − (07-28~08-04) (= 원래 시행일 08-05 이후)", "pct": 5.145, "p": 0.864, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "프리미엄 규정 08-19 이후", "pct": 3.629, "p": 0.892, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "조기시행 공지 07-24 이후", "pct": 8.863, "p": 0.739, "p_holm": 1.0, "p_maxT": 0.994}, {"window": "구간: 발표~조기공지", "pct": 8.052, "p": 0.761, "p_holm": 1.0, "p_maxT": 1.0}, {"window": "구간: 조기공지~시행", "pct": 40.724, "p": 0.233, "p_holm": 1.0, "p_maxT": 0.722}, {"window": "구간: 시행~추가조치", "pct": 105.159, "p": 0.131, "p_holm": 1.0, "p_maxT": 0.619}, {"window": "구간: 추가조치~원시행일", "pct": 14.315, "p": 0.727, "p_holm": 1.0, "p_maxT": 0.994}, {"window": "구간: 원시행일~프리미엄", "pct": 13.798, "p": 0.688, "p_holm": 1.0, "p_maxT": 0.994}, {"window": "구간: 프리미엄 이후", "pct": 3.629, "p": 0.892, "p_holm": 1.0, "p_maxT": 1.0}]
+
+## RQ2-S5-BSTS_005930 [robustness] — ok
+- **목적**: bias×오염×초과교란 결합 민감도
+- **데이터**: Exp1·Exp2 결과표
+- **모형**: 가산식 τ=(θ̂−b−δ)/(1−A s)
+- **설정**: `{"bias_grid": [-0.1, 0.0, 0.1, 0.2, 0.3], "share_grid": [0.0, 0.25, 0.5, 0.75, 1.0], "conf_grid": [-0.1, 0.0, 0.1, 0.2]}`
+- **결과**: {"design": "BSTS_005930", "theta_pct": 5.318230934253385, "A": 1.1219757887118966, "s_max": 1.0, "b_range": "[-0.47, 0.50]", "share_cells_negative": 0.56, "share_cells_le_m10": 0.48, "share_cells_le_m20": 0.36, "share_cells_sig_negative": 0.0, "delta0_share_le_m10": 0.4, "min_implied_pct": -94.0829559448081, "max_implied_pct": 389.6715644574142, "n_cells": 100}
+
+## RQ2-S5-BSTS_000660 [robustness] — ok
+- **목적**: bias×오염×초과교란 결합 민감도
+- **데이터**: Exp1·Exp2 결과표
+- **모형**: 가산식 τ=(θ̂−b−δ)/(1−A s)
+- **설정**: `{"bias_grid": [-0.1, 0.0, 0.1, 0.2, 0.3], "share_grid": [0.0, 0.25, 0.5, 0.75, 1.0], "conf_grid": [-0.1, 0.0, 0.1, 0.2]}`
+- **결과**: {"design": "BSTS_000660", "theta_pct": -5.181711003277231, "A": 0.8752321983293276, "s_max": 1.0, "b_range": "[-0.40, 0.52]", "share_cells_negative": 0.85, "share_cells_le_m10": 0.76, "share_cells_le_m20": 0.65, "share_cells_sig_negative": 0.0, "delta0_share_le_m10": 0.68, "min_implied_pct": -98.81318785069143, "max_implied_pct": 224.3076787797806, "n_cells": 100}
+
+## RQ2-S5-SIMPLEX_005930 [robustness] — ok
+- **목적**: bias×오염×초과교란 결합 민감도
+- **데이터**: Exp1·Exp2 결과표
+- **모형**: 가산식 τ=(θ̂−b−δ)/(1−A s)
+- **설정**: `{"bias_grid": [-0.1, 0.0, 0.1, 0.2, 0.3], "share_grid": [0.0, 0.25, 0.5, 0.75, 1.0], "conf_grid": [-0.1, 0.0, 0.1, 0.2]}`
+- **결과**: {"design": "SIMPLEX_005930", "theta_pct": 6.59857948519134, "A": 1.105680935101235, "s_max": 1.0, "b_range": "[-0.47, 0.52]", "share_cells_negative": 0.56, "share_cells_le_m10": 0.44, "share_cells_le_m20": 0.32, "share_cells_sig_negative": 0.0, "delta0_share_le_m10": 0.36, "min_implied_pct": -92.22445342623193, "max_implied_pct": 369.09319632914315, "n_cells": 100}
+
+## RQ2-S5-SIMPLEX_000660 [robustness] — ok
+- **목적**: bias×오염×초과교란 결합 민감도
+- **데이터**: Exp1·Exp2 결과표
+- **모형**: 가산식 τ=(θ̂−b−δ)/(1−A s)
+- **설정**: `{"bias_grid": [-0.1, 0.0, 0.1, 0.2, 0.3], "share_grid": [0.0, 0.25, 0.5, 0.75, 1.0], "conf_grid": [-0.1, 0.0, 0.1, 0.2]}`
+- **결과**: {"design": "SIMPLEX_000660", "theta_pct": -3.7864513619658298, "A": 0.8547696648980431, "s_max": 1.0, "b_range": "[-0.43, 0.47]", "share_cells_negative": 0.85, "share_cells_le_m10": 0.76, "share_cells_le_m20": 0.65, "share_cells_sig_negative": 0.0, "delta0_share_le_m10": 0.68, "min_implied_pct": -97.54879781573523, "max_implied_pct": 203.84212893437302, "n_cells": 100}
+
+## RQ2-S5-DIFF_005930 [robustness] — ok
+- **목적**: bias×오염×초과교란 결합 민감도
+- **데이터**: Exp1·Exp2 결과표
+- **모형**: 가산식 τ=(θ̂−b−δ)/(1−A s)
+- **설정**: `{"bias_grid": [-0.1, 0.0, 0.1, 0.2, 0.3], "share_grid": [0.0, 0.25, 0.5, 0.75, 1.0], "conf_grid": [-0.1, 0.0, 0.1, 0.2]}`
+- **결과**: {"design": "DIFF_005930", "theta_pct": 2.4212150027831862, "A": 1.0, "s_max": 1.0, "b_range": "[-0.22, 0.32]", "share_cells_negative": 0.56, "share_cells_le_m10": 0.48, "share_cells_le_m20": 0.4, "share_cells_sig_negative": 0.15, "delta0_share_le_m10": 0.4, "min_implied_pct": -85.10739296499183, "max_implied_pct": 144.90366219146432, "n_cells": 100}
+
+## RQ2-S5-STRUCT [diagnostic] — ok
+- **목적**: 가산식 vs BSTS 구조 주입 재적합
+- **데이터**: rv5
+- **모형**: BSTS 주 설정
+- **설정**: `{"cells": [[0.1, 0.5, 0.1, -0.2], [0.2, 1.0, 0.0, -0.1]]}`
+- **결과**: [{"code": "005930", "b": 0.1, "s": 0.5, "delta": 0.1, "tau": -0.2, "diff": 0.0, "tau_error": 0.0}, {"code": "005930", "b": 0.2, "s": 1.0, "delta": 0.0, "tau": -0.1, "diff": 0.0, "tau_error": -0.0001}, {"code": "000660", "b": 0.1, "s": 0.5, "delta": 0.1, "tau": -0.2, "diff": 0.0, "tau_error": 0.0}, {"code": "000660", "b": 0.2, "s": 1.0, "delta": 0.0, "tau": -0.1, "diff": 0.0, "tau_error": 0.0001}]
+
+## RQ2-S6-DIAG [diagnostic] — ok
+- **목적**: 검정력·교환가능성·실행 간 차이·근사 검증
+- **데이터**: 결과표·ml_ext 캐시
+- **모형**: -
+- **설정**: ``
+- **진단**: {"exch": [{"code": "005930", "pre_rmse": 0.421, "pre_rmse_pctile": 0.091, "pre_level": -7.415, "pre_level_pctile": 0.274, "pre_trend_per_month": 0.237, "pre_trend_pctile": 0.943}, {"code": "000660", "pre_rmse": 0.435, "pre_rmse_pctile": 0.154, "pre_level": -6.933, "pre_level_pctile": 0.646, "pre_trend_per_month": 0.132, "pre_trend_pctile": 0.514}, {"code": "005935", "pre_rmse": 0.465, "pre_rmse_pctile": 0.246, "pre_level": -7.356, "pre_level_pctile": 0.326, "pre_trend_per_month": 0.232, "pre_trend_pctile": 0.943}], "checks": [{"check": "Exp2 반응계수 선형성 |A(u)−A(u/2)| 최대 (C_joint)", "value": 0.0002}, {"check": "Exp2 실제 주입 재적합 − 선형 근사 |차이| 최대 (log)", "value": 0.0}, {"check": "Exp5 구조 주입 − 가산식 |차이| 최대 (log)", "value": 0.0}, {"check": "Exp5 τ 복원 오차 |최대| (log)", "value": 0.0001}]}
+- **결과**: {"mde80_pct": {"BSTS_005930": -58.454, "BSTS_000660": -58.454, "SIMPLEX_005930": -57.673, "SIMPLEX_000660": -57.673, "DIFF_005930": -37.667}, "power_-20pct": {"BSTS_005930": 0.114, "BSTS_000660": 0.114, "SIMPLEX_005930": 0.12, "SIMPLEX_000660": 0.12, "DIFF_005930": 0.308}}
