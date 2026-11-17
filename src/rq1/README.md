@@ -8,7 +8,9 @@
 
 ## 상태
 
-사전 지정 초안 작성 (2026-11-17). 진행 상황과 결정은 [PROGRESS.md](PROGRESS.md), 설정과 주 검정은 [config.yaml](config.yaml).
+- **1차 연구 (main_study)**: 분석 완료 (2026-11-17). 결론과 근거는 [main_study/results/REPORT.md](main_study/results/REPORT.md).
+  요약: 상장 후 두 종목의 변동성이 올랐지만 상품 없는 삼성전자우·반도체 종목도 같은 크기로 올라, 상장 효과의 증거는 없다. 검정력은 낮다.
+- 진행 기록과 결정은 [PROGRESS.md](PROGRESS.md), 설정과 사전 지정은 [config.yaml](config.yaml).
 
 ## 구조 (RQ2 틀을 따름)
 

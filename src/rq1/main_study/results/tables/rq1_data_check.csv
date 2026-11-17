@@ -1,0 +1,5 @@
+﻿role,n_codes,n_obs,n_pre_days,n_post_days,n_missing_cells,mean_lrv_pre,mean_lrv_post,raw_change_post_minus_pre
+donor,175,33249,155,35,1.0,-7.2947,-6.5047,0.79
+neg_same,1,190,155,35,0.0,-7.62,-6.1857,1.4344
+neg_semis,7,1330,155,35,0.0,-6.7696,-5.6297,1.1399
+treated,2,380,155,35,0.0,-7.4021,-6.1628,1.2393
