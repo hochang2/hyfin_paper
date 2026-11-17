@@ -1,0 +1,10 @@
+﻿dataset,period,window,n_cands,best,best_dmse_gain,rc_p,n_i0
+gk,holdout,h10,35,simplex_cap,0.0151,0.016,100
+gk,holdout,h30,35,bsts_shrink,0.0054,0.4288,100
+gk,holdout,post_effective,35,h_bsts_chr_uc,-0.0023,0.9995,100
+rv5,transfer,h10,35,bc_bsts,0.0128,0.1069,21
+rv5,transfer,h20,35,meta_ftl,0.0173,0.0005,17
+rv5,transfer,h30,35,bc_bsts,0.0158,0.1024,14
+rv5d,transfer,h10,34,simplex,0.0307,0.045,21
+rv5d,transfer,h20,34,simplex_l2|glocal,0.0294,0.0005,17
+rv5d,transfer,h30,34,simplex_l2|glocal,0.0317,0.0005,14

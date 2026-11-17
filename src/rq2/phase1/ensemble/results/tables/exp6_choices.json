@@ -1,0 +1,24 @@
+{
+ "best_ml": "enet",
+ "best_fm": "timesfm_xreg",
+ "best_any": "ols",
+ "rmse_ml": {
+  "enet": 0.28852258920809654,
+  "lgbm": 0.3106402355396964,
+  "xgb": 0.3396361426697076,
+  "rf": 0.34042961248919934
+ },
+ "rmse_fm": {
+  "chronos2_cov": 0.2898078514888677,
+  "timesfm_xreg": 0.25611480322944796
+ },
+ "frozen_picks": {
+  "overall": "stat_simplex",
+  "best_single": "m:timesfm_xreg",
+  "selective": "stat_simplex",
+  "stock_adaptive": "simplex_l2|hier",
+  "regime_aware": "simplex_l2|regime_trend",
+  "old_stack": "old_stack"
+ },
+ "regime_real": "crash"
+}

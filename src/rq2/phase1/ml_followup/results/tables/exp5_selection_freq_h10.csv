@@ -1,0 +1,9 @@
+﻿selected,share
+did_gap,0.2807
+rf,0.1404
+bsts,0.1316
+ols,0.1053
+lgbm,0.0965
+harx,0.0833
+naive_mean,0.0833
+enet,0.0789
