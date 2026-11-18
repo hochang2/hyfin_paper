@@ -1,0 +1,115 @@
+# RQ1 실험 설정 (연구자 B). RQ1 전용 파일이다 (공통 설정은 configs/*.yaml).
+# 코드: src/rq1/. RQ1 코드가 이 파일에서 값을 읽고, 값이 바뀌면 실험 로그에 그대로 남는다.
+# 상태: 초안 (2026-11-17). 아래 pre_registration 은 분석 코드를 돌리기 전에 별도 커밋으로 동결한다.
+# 동결 후 바꾸면 지우지 말고 changes 에 날짜·이유를 추가한다.
+
+seed: 20261117
+
+# 사건일: 연구자 A 가 확인한 configs/rq2.yaml timeline 을 그대로 쓴다 (2026-11-17 B 동의).
+# 공통 configs/events.yaml 갱신은 A 와 별도로 진행한다 (RQ1 커밋 범위 밖).
+timeline:
+  listing: 2026-05-27            # 단일종목 레버리지 ETF 16 + ETN 2 상장
+  announce: 2026-07-16           # 보완방안 발표 → RQ1 처치 구간은 이 전날에 끝난다
+  early_effective_notice: 2026-07-24
+  circuit_breaker: 2026-07-28
+  effective: 2026-07-31
+  source: "configs/rq2.yaml timeline (금융위 보도자료 2026-07-24 등, A 확인)"
+
+sample:
+  start: 2025-10-01        # 분봉 RV 시작
+  pre_end: 2026-05-26      # 상장 전날. 표준화·PCA·매칭은 여기까지 자료로만 정한다
+  treat_start: 2026-05-27
+  treat_end: 2026-07-15    # 발표 전날 (35거래일). 이후 자료는 RQ1 주 분석에 쓰지 않는다
+  long_start: 2016-01-01   # 일별 GK 긴 표본 (placebo 보정용)
+
+treated: ["005930", "000660"]
+negative_control: "005935"   # 삼성전자우: 같은 기업, 단일종목 레버리지 상품 없음. donor 에는 넣지 않는다. 005930 전용
+# 000660 용 업종 음성통제: 반도체 관련주 중 삼성·SK 계열(009150 삼성전기, 011790 SKC)을 뺀 7종목.
+# 단일종목 상품의 기초지수는 삼성전자·SK하이닉스 두 종목뿐임을 확인 (proc.etf_daily, 2026-05-27 상장분, 2026-11-17).
+# 각 종목 DiD 효과와 7종목 평균 log RV 의 DiD 효과를 함께 본다. donor 에는 원래 들어 있지 않다 (rq2 donor_exclude.semis_related).
+semis_negative_control: ["000990", "042700", "007660", "011070", "014680", "034220", "093370"]
+
+# 대조군·통제: RQ2 와 같은 정의를 쓴다 (2026-11-17 B 동의). 값은 configs/rq2.yaml 에서 읽는다.
+donor_pool:
+  main: "configs/rq2.yaml#donor_exclude 적용 후 main 175종목 (반도체 관련·삼성/SK 계열·늦은 상장 제외)"
+  matched: "main 중 상장 전 자료로 규모·베타·사전 log RV 가 가까운 20종목 (강건성)"
+controls:
+  timeseries: C_main       # 시계열 회귀용: don_mean, don_pc2, don_pc3, kosdaq_lrv, us_lvix, us_abs_sox, gap_day
+  panel: [own_lrv_lag1, own_lrv_lag5, earnings_day, beta_prev_x_us_lvix]   # 패널 DiD 보조용: 종목마다 값이 다른 변수만 (시장 공통 변수는 날짜 FE 에 흡수됨)
+  robustness: [C0, C_us_only, C_contaminated]
+
+measure:
+  main: rv5                # ln(rv5), 정규장 5분
+  robustness: [rv5_close, rv_pk, gk]
+
+pre_registration:
+  hypothesis: "H1: 상장 후(05-27~07-15) 005930·000660 의 log RV 가 대조 종목 대비 상대적으로 높아졌다 (DiD 효과 > 0)"
+  test: two_sided          # 방향 가설이지만 RQ2 와 맞춰 양측 5%
+
+  main_design:
+    model: "패널 DiD (TWFE): ln rv5_it = α_i + λ_t + β·(Treated_i × Post_t) + ε_it"
+    units: "처리 종목 1개 + donor main 175. 처리 종목별로 따로 추정한다"
+    sample: "2025-10-01 ~ 2026-07-15"
+    post: "date >= 2026-05-27"
+    event_study: "5거래일 단위 구간. 상장 전 −8~−1 구간과 상장 후 0~+6 구간을 따로 추정하고, −9 이전 구간 전체를 기준으로 둔다"
+
+  # 주 검정 family: 이 2개만 결론의 근거로 쓴다. 나머지는 모두 탐색적·강건성 분석이다.
+  primary_family:
+    - id: P1
+      code: "005930"
+      estimate: "main_design 의 β"
+      inference: "donor placebo-in-space 순열 p (donor 각 종목을 가짜 처리 종목으로 같은 DiD 를 돌린 분포 대비 |β| 순위)"
+    - id: P2
+      code: "000660"
+      estimate: "main_design 의 β"
+      inference: "P1 과 같음"
+  multiple_testing: holm   # P1, P2 두 검정. 처리 종목이 1개라 군집 표준오차는 쓰지 않는다 (보고만 함)
+
+  # 효과로 인정하는 조건: 세 가지를 모두 만족해야 한다.
+  decision_rule:
+    a: "주 설계(donor main, rv5)의 Holm 보정 순열 p < 0.05"
+    b:                     # 종목별로 다르다. 같은 기업 우선주는 삼성전자에만 있다
+      "005930": "같은 기업 음성통제 005935 에 같은 DiD 를 적용했을 때 같은 방향·비슷한 크기의 효과가 나오지 않는다 (기업·업종 충격을 걸러냄)"
+      "000660": "업종 음성통제 semis_negative_control 에 같은 DiD 를 적용했을 때 같은 방향·비슷한 크기의 효과가 나오지 않는다 (업종 충격만 걸러냄. 같은 기업 대조가 없으므로 SK하이닉스 고유 충격은 배제하지 못한다 → 한계로 적는다)"
+    c: "사전 추세: 상장 전 구간 계수가 함께 0 이라는 가설이 순열 검정에서 기각되지 않는다 (기각되면 효과 판정 보류)"
+  report_mde: true         # 80% 검정력, 양측 5%, 2.8 × placebo sd. 효과 없음과 검출 불가를 구분한다
+
+  pre_trend_and_anticipation:
+    - "이벤트 스터디 상장 전 계수 −8~−1 의 결합 검정 (순열)"
+    - "사전 반응: −1 구간(05-20~05-26)과 05-22 이후만 따로 본다. RQ2 에서 000660 sup-F 시점이 05-22 였음"
+    - "상품 승인·공시일이 확인되면 그날을 두 번째 기준일로 둔 강건성 추가"
+
+  # 005930: 주 설계(donor DiD)와 같은 기업 차분(005930 − 005935)이 다를 때의 해석 규칙
+  disagreement_rule_005930:
+    both_positive_significant: "상장 효과의 근거가 가장 강하다"
+    did_positive__within_null: "기업 수준 요인(삼성전자 뉴스·반도체 업황)과 구분할 수 없다. 상품 효과로 주장하지 않는다. 우선주로의 파급 가능성은 한계로 적는다"
+    did_null__within_positive: "주 검정이 기각되지 않았으므로 결론은 '증거 없음'. 같은 기업 결과는 시사점으로만 보고한다. 우선주가 donor 대비 떨어져서 생긴 차이인지 확인한다"
+    opposite_signs: "결론 보류. 원인(우선주 고유 요인, 대조군 구성)을 진단해 기록한다"
+    principle: "결론은 주 검정으로만 내린다. 강건성 결과로 주 결론을 뒤집지 않고, 차이와 원인을 함께 보고한다"
+
+  # 이 설계를 정하기 전에 이미 알고 있던 사실 (2026-11-17, RQ2 REPORT.md 를 읽고 앎)
+  known_before:
+    - "RQ1 데이터로 직접 추정한 결과는 아직 없다"
+    - "RQ2: 5~7월 국내 시장 전체 변동성 급등 (미국 기준 반사실 대비 donor 평균도 상승)"
+    - "RQ2: 000660 회귀관계 구조변화, Chow(상장일) p=0.001, sup-F 추정 시점 2026-05-22; 005930 Chow p=0.043"
+    - "RQ2: 005935 는 대부분의 통제 모형에서 반사실보다 높게 나옴 (+0.19~+0.35, 규제 기간)"
+    - "RQ2: 005930−005935 차분은 사전 추세 평행 (+0.005/월, p=0.69)"
+    - "RQ2: 모형 p 의 위양성률이 명목 5% 를 크게 넘음 (BSTS 0.19, OLS 0.17 등)"
+
+  auxiliary:               # 보조 분석 (결론의 근거로 쓰지 않음)
+    - "통합 효과: 두 처리 종목을 함께 넣은 DiD"
+    - "통제변수 포함 회귀: 패널 DiD + controls.panel, 시계열 이벤트 회귀 + controls.timeseries (HAR 시차)"
+
+  robustness:
+    - "같은 기업 차분 005930 − 005935 (β=1 고정, 긴 표본 GK placebo 보정)"
+    - "RQ2 BSTS 반사실 (학습 ~2026-05-26, src/rq2/core 재사용)"
+    - "donor matched 20종목"
+    - "측정치 rv5_close, rv_pk, 일별 GK"
+    - "05-22~05-26 제외(donut), 실적 발표일·만기일 제외"
+
+  exploratory:
+    - "GJR-GARCH 분산식 상장 더미 (일별, 긴 표본)"
+    - "구조변화 검정 (Chow 상장일, sup-F / Bai-Perron)"
+    - "장 마감 30분 RV (리밸런싱 경로) — A 와 역할 조율 후"
+
+  changes: []              # 동결 후 변경: {date, item, reason}
