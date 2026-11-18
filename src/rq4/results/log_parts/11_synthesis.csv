@@ -1,0 +1,7 @@
+﻿id,phase,kind,hypothesis,purpose,treated,control,period,outcome,controls,model,estimand,estimate,ci_low,ci_high,se,p,p_adj,correction,inference,diagnostics,failure_revision,robustness,sensitivity,interpretation,status,runtime_s,seed,timestamp
+Z1,8_synthesis,synthesis,,핵심 추정 요약,,,,,,,,"     estimand  estimate      pct  p_placebo  p_cr1  p_wild  robust_min  robust_max  robust_share_same_sign honest_RM_breakdown
+0     H1 풀링 β    -0.101   -9.579      0.920  0.708   0.718      -0.534       0.481                   0.630                 NaN
+1   β_B 지수 2X    -0.583  -44.175      0.160  0.006   0.014      -0.833       0.162                   0.889                None
+2  β_C 반도체 2X     0.957  160.275      0.087  0.030   0.182       0.313       1.652                   1.000                 0.0
+3  H2 β_C−β_B     1.540      NaN      0.087  0.002   0.007       0.654       2.180                   1.000                 NaN",,,,,,,,,,,,,ok,0.1,20261115,2026-11-17T18:28:22
+Z2,8_synthesis,rq2_link,,RQ2 연결 (마지막 단계에서만),,,,,,,,,,,,,,,,,,,,"RQ2: 규제 후 기초자산(삼성전자·SK하이닉스) 변동성의 유의한 감소 없음(null). RQ4: 규제 상품 거래는 −94% 로 붕괴했지만, 국내 비규제 2X 로의 상대적 이동(풍선효과)은 확인되지 않음. 따라서 RQ2 null 을 '수요가 국내 대체 상품으로 옮겨가 기초자산 압력이 유지됐기 때문' 이라고 설명할 근거는 약하다. 남는 설명: (1) 규제 상품의 기초자산 가격영향이 원래 작았음, (2) 해외 상장 상품·현물·신용 등 관측 못한 경로, (3) RQ2 의 검정력 한계(MDE −38~−58%).",ok,0.0,20261115,2026-11-17T18:28:22

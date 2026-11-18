@@ -7,12 +7,12 @@
 
 | 단계 | RQ2 | RQ4 |
 |---|---|---|
-| 1. 검토·설계 | 완료 | 설계 메모만 (아래) |
-| 2. Baseline | 완료 (BSTS 주 분석, ITS, within-firm) | 미착수 |
-| 3. 확장 모형 | 완료 (11개 모형 + Chronos-2·TimesFM + GARCH) | - |
-| 4. 진단 | 완료 (D01~D05, 통제 오염 점검 포함) | - |
-| 5. 강건성 | 완료 (BSTS 24·OLS 20 사양, placebo 4종, 미국 변수 반사실) | - |
-| 6. 종합 보고서 | 완료 (src/rq2/phase1/main_study/results/REPORT.md, 2026-11-16) | - |
+| 1. 검토·설계 | 완료 | 완료 (src/rq4/config.yaml 사전 설계) |
+| 2. Baseline | 완료 (BSTS 주 분석, ITS, within-firm) | 완료 (DID·event study·DDD, 역사적 위약 주 추론) |
+| 3. 확장 모형 | 완료 (11개 모형 + Chronos-2·TimesFM + GARCH) | 완료 (매칭·IPW/DR·SDID) |
+| 4. 진단 | 완료 (D01~D05, 통제 오염 점검 포함) | 완료 (G01~G09) |
+| 5. 강건성 | 완료 (BSTS 24·OLS 20 사양, placebo 4종, 미국 변수 반사실) | 완료 (R00~R33, 위약 P1~P5) |
+| 6. 종합 보고서 | 완료 (src/rq2/phase1/main_study/results/REPORT.md, 2026-11-16) | 완료 (src/rq4/results/REPORT.md, 2026-11-17) |
 | 7. ML 확장 하위실험 | 완료 (src/rq2/phase1/ml_extension/results/REPORT.md, 2026-11-16) | - |
 
 ## 실행 방법
@@ -65,7 +65,15 @@ py -m pytest src/rq2/tests                  # BSTS 구현 검증 (모의자료)
 - time 보정은 비겹침 유효 창 수(n_eff)로 한다. rv5 30일 이상은 검정 불가라서 사전 규칙의 fallback(10일)을 썼다 → harx 선정, 실제 효과 모두 비유의 (Holm p 1.0).
 - 다음: 2027-01 까지 표본 연장 시 `src/rq2/phase1/ml_extension/config.yaml` 날짜만 바꾸고 재실행. 해외 ETF 는 가장 나중.
 
-## RQ4 설계 메모 (착수 전)
+## RQ4 결과 메모 (src/rq4/results/REPORT.md, 2026-11-17)
+
+- H1 지지 안 됨: 비규제 2X(B∪C) vs 1X β = −0.10, 역사적 위약 p 0.92. 모든 SE·사양에서 비유의.
+- H2: β_C − β_B = +1.54 (위약 p 0.087, Holm 0.174; CR1 0.002). 반도체 사전 V자 추세·반도체 1X 대조 −73% 붕괴 때문. 기준선을 상장 직전 35일로 옮기면 0.65 (p 0.35). HonestDiD 붕괴점 M̄ < 0.25.
+- 규제 대상 거래 −94%. 국내 2X 가 흡수한 삼성·하이닉스 노출은 사라진 노출의 1.5~3.5%. 교차상관은 양(+) → 대체 아님.
+- 해외 상장 상품 경로는 자료 없음 → 다음 우선 과제 (SEIBro 해외주식 결제).
+- RQ2 연결: '국내 대체상품으로 압력 유지' 설명을 약화시키는 정황 증거. 인과 검증 아님.
+
+## RQ4 설계 메모 (착수 전, 기록용)
 
 - 단위: ETF 상품.
   - 처치(대체재 후보): 규제 밖 국내 레버리지 2X — KOSPI200, KOSDAQ150, 반도체, 나스닥, SOX.
