@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.rq3.main_study import data as D
+from src.rq3.core import data as D
 
 LISTING = D.CFG["sample"]["listing"]
 
@@ -85,3 +85,15 @@ def test_negative_control_uses_samsung_pressure():
     s = D.design("005930")
     assert np.allclose(d.X, s.X) and np.allclose(d.S, s.S)
     assert not np.allclose(d.R, s.R)
+
+
+def test_window_rv_parts_of_daily_rv():
+    """마감창 + 장중창 ≤ 하루 정규장 RV, 종가 단일가 포함 값 ≥ 마감창."""
+    from src.rq2.core import data as rq2data
+    w = D.window_rv()
+    rv = rq2data.raw_rv()[["date", "code", "rv5"]]
+    m = w.merge(rv, on=["date", "code"])
+    assert len(m) == 3 * 261
+    assert (m.rvc + m.rvi <= m.rv5 * (1 + 1e-9)).all()
+    assert (m.rvc_auc >= m.rvc - 1e-15).all()
+    assert (m.rvc > 0).mean() > 0.99

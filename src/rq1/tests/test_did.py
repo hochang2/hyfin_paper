@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from src.rq1.main_study import did
+from src.rq1.core import did
 
 
 def _sim(effect=0.3, n_units=40, n_pre=60, n_post=20, seed=0, drop_one=False):
