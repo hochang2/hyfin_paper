@@ -8,10 +8,19 @@
 
 ## 상태
 
-미구현. 변수·표본기간이 확정되면 [PROJECT_CONTEXT.md](../../PROJECT_CONTEXT.md) 7절 결정 기록에 남기고 구현한다.
+- **1차 연구 (main_study)**: 분석 완료 (2026-11-17). 결론과 근거는 [main_study/results/REPORT.md](main_study/results/REPORT.md).
+  요약: 상장 후 두 종목의 변동성이 올랐지만 상품 없는 삼성전자우·반도체 종목도 같은 크기로 올라, 상장 효과의 증거는 없다. 검정력은 낮다.
+- 진행 기록과 결정은 [PROGRESS.md](PROGRESS.md), 설정과 사전 지정은 [config.yaml](config.yaml).
 
-## 파일
+## 구조 (RQ2 틀을 따름)
 
-- 분석 코드: 이 폴더의 `*.py` (공통 함수는 `src/common/`)
-- 결과 그림·표: `results/`
-- 테스트: `test_*.py`
+```
+src/rq1/
+  config.yaml     사건일·통제·표본·사전 지정(주 검정, 판정 규칙, 미리 알던 사실)
+  PROGRESS.md     진행 기록·결정·A 와 조율할 것
+  main_study/     주 분석 (예정): run_all.py, *.py
+    results/      REPORT.md, tables/, figures/, experiment_log.{csv,md}, environment.json
+```
+
+- 반사실 모형·데이터 로드·실험 로그는 `src/rq2/core/` 를 수정하지 않고 import 한다.
+- 결과는 동결한다. 다시 돌리면 새 커밋으로 남긴다.
