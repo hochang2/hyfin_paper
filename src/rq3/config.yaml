@@ -1,0 +1,135 @@
+# RQ3 실험 설정 (연구자 B). RQ3 전용 파일이다 (공통 설정은 configs/*.yaml).
+# 코드: src/rq3/. RQ3 코드가 이 파일에서 값을 읽고, 값이 바뀌면 실험 로그에 그대로 남는다.
+# 상태: 동결 (2026-11-18, 커밋 "rq3 사전 지정"). 표본외 예측을 처음 돌리기 전에 동결했다.
+# 동결 후 바꾸면 지우지 말고 changes 에 날짜·이유를 추가한다. 동결 후 현재 자료를 보고 모형을 바꾸면 그 결과는 탐색적이다.
+
+seed: 20261118
+
+# 사건일: RQ1 과 같다 (configs/rq2.yaml timeline, A 확인)
+timeline:
+  listing: 2026-05-27
+  announce: 2026-07-16
+  early_effective_notice: 2026-07-24
+  circuit_breaker: 2026-07-28
+  effective: 2026-07-31
+  source: "configs/rq2.yaml timeline (src/rq1/config.yaml 과 같음)"
+
+sample:
+  start: 2025-10-01          # 분봉 RV 시작. 상장 전에는 상품이 없으므로 ETF 변수 = 0 (참값)
+  listing: 2026-05-27
+  end: 2026-10-30            # 현재 DB 마지막 날 (261거래일, 상장 후 106거래일)
+
+targets: ["005930", "000660"]
+negative_control: "005935"   # 삼성전자우: 상품이 없고 헤지 매매도 보통주(005930)로 들어간다. 보조 음성통제
+
+# 단일종목 상품 18개 (proc.etf_daily grp = 'P1_단일종목상품', 2026-11-18 확인). 기초자산별로 합산한다
+products:
+  source: "hyfin.proc.etf_daily WHERE grp = 'P1_단일종목상품'"
+  map_by: index_name         # '삼성전자' → 005930, 'SK하이닉스' → 000660
+  count: {"005930": 9, "000660": 9}   # 종목별 2X ETF 7 (현물 5·선물 2), −2X ETF 1, 2X ETN 1
+  size: aum_calc             # 상장증권수 × NAV(ETN 은 지표가치). ETN 은 aum_won 이 비어 있어 18개 모두 aum_calc 로 통일
+
+# 변수 정의. 모든 설명변수는 t 일 장 마감까지 알 수 있는 값이고, t+1 일을 예측한다
+variables:
+  y: "ln rv5 (정규장 5분 RV)"
+  har: "ln RV_t, ln(5일 평균 RV_{t-4..t}), ln(22일 평균 RV_{t-21..t})  (RV 수준을 평균한 뒤 log)"
+  listing_dummy: "D_t = 1{t >= 2026-05-27}"
+  abs_ret: "R_t = ln(1 + 100·|r_t|), r_t = 기초자산 종가 대비 종가 log 수익률 (proc.stock_daily.ret_log)"
+  rebalancing_pressure:      # '이론적 리밸런싱 압력' (실제 운용사 매매량이 아님)
+    raw: "S_t = Σ_i L_i(L_i − 1)·AUM_{i,t−1} / 기초자산 거래대금_t ;  Q_t = 100·|r_t|·S_t"
+    transform: "X_t = ln(1 + Q_t)"
+    notes:
+      - "L(L−1): 2X → 2, −2X → 6. 둘 다 양수라 같은 방향(추세 추종) 매매가 된다"
+      - "AUM 은 전일 값(t−1). 상장일(05-27)은 전일 값이 없으므로 당일 aum_calc 를 쓴다"
+      - "선물 기반 상품도 같은 식으로 넣는다 (헤지 수단 차이는 한계로 적는다)"
+      - "Q 는 |r|·S 이므로 수익률 크기 정보를 포함한다 → 반드시 R_t 를 통제한 모형과 비교한다"
+      - "거래대금은 proc.stock_daily.value (원)"
+
+pre_registration:
+  question: "기존 HAR-RV 와 당일 수익률 충격 정보를 고려한 뒤에도, ETF 이론적 리밸런싱 압력이 다음 날 실현변동성 예측을 개선하는가"
+  nature: "예측력 비교다. 인과 효과를 주장하지 않는다"
+  hypothesis: "H1: 모형 C 의 표본외 MSE 가 모형 B 보다 작다 (한쪽)"
+
+  models:
+    A: "ln RV_{t+1} = HAR + D_t"
+    B: "A + R_t                    (수익률 충격 통제)"
+    C: "B + X_t                    (주 비교: C vs B)"
+    estimation: OLS
+
+  forecast_scheme:
+    window: expanding        # 2025-10-01 부터 예측 시점 t 까지 자료로 매번 다시 추정
+    horizon: 1
+    first_origin: "상장일 포함 30번째 거래일 (그 전에는 ETF·더미 계수 추정에 쓸 상장 후 자료가 너무 적다)"
+    last_target: 2026-10-30
+    note: "첫 원점 2026-07-08 (예측 대상 07-09~10-30). 표본외 예측 수는 종목당 76개"
+
+  # 주 검정 family: 이 2개만 결론의 근거로 쓴다
+  primary_family:
+    - {id: P1, code: "005930", comparison: "C vs B"}
+    - {id: P2, code: "000660", comparison: "C vs B"}
+  test:
+    loss: "MSE (ln RV)"
+    statistic: "Clark-West (2007) MSPE-adjusted, 포함 관계 모형용. 한쪽 검정"
+    se: "Newey-West, lag = floor(4·(n/100)^(2/9))"
+  multiple_testing: holm
+  alpha: 0.05
+
+  # 예측 개선 판정은 주 검정 하나로만 한다 (2026-11-18 B 결정: 위약·부호는 판정 조건이 아니라 해석 근거)
+  decision_rule:
+    primary: "Holm 보정 Clark-West p < 0.05 이면 '예측 개선', 아니면 '추가 예측력의 증거 없음'"
+
+  # 주 검정과 함께 보고하는 해석 근거 (판정을 바꾸지 않는다)
+  interpretation_evidence:
+    sign: "전체 표본 추정에서 X 계수 부호 (이론 방향 = 양수). 확장 창 계수 경로도 함께 그린다"
+    placebo:
+      what: "축척 순열 위약: S_t 시계열을 5일 블록 단위로 섞어 만든 가짜 X 로 같은 C vs B Clark-West 통계량을 1000번 계산. 실제 통계량의 위약 분포 내 순위(p)를 보고한다"
+      blocks_within: "규제 구간 안에서만 섞는다: 상장~발표 전(05-27~07-15) / 발표~시행 전(07-16~07-30) / 시행 후(07-31~). 구간 경계를 넘는 블록은 만들지 않는다 (규제 전후 ETF 규모 분포 차이 보존)"
+      why_not_required: "표본외 예측 76개, 구간별 블록 수가 적어 검정력이 낮다"
+    reading:                 # 주 검정 결과 × 해석 근거 조합별 서술
+      improve__sign_pos__placebo_pass: "ETF 리밸런싱 압력의 추가 예측력 근거가 가장 강하다"
+      improve__placebo_fail: "예측 개선은 있으나 ETF 규모 고유 정보인지 |r| 와 결합된 효과인지 구분되지 않는다고 적는다"
+      improve__sign_neg: "예측 개선은 있으나 이론 방향과 반대다. 메커니즘을 주장하지 않고 원인을 진단한다"
+      none: "추가 예측력의 증거 없음. 위약·부호는 참고로만 보고하고, 검출 가능한 개선 크기의 한계를 적는다"
+
+  # 확증 평가: 동결된 모형을 이후에 추가될 자료로 다시 평가한다
+  confirmatory:
+    data: "2026-11-02 이후 DB 에 추가되는 자료 (전부 규제 시행 후). 적재 시점은 A 와 확인"
+    scheme: "같은 모형·같은 변수 정의·같은 검정. 추정은 확장 창 그대로, 평가는 새 날짜만"
+    min_days: 40             # 40거래일 미만이면 평가하지 않고 '미실시' 로 보고한다
+    interpretation:          # '개선' = decision_rule.primary 충족 여부
+      improve__improve: "두 평가 기간 모두에서 예측력이 확인됨"
+      improve__none: "현재 기간의 개선이 규제 이후에도 유지되는지 불확실"
+      none__improve: "규제 이후 기간에서 새로 개선이 관측됨 (시장 구조 변화 가능성과 우연 가능성을 함께 적는다)"
+      none__none: "추가 예측력의 증거 없음"
+
+  # 이 설계를 정하기 전에 이미 알고 있던 사실 (2026-11-18)
+  known_before:
+    - "RQ3 데이터로 예측 모형을 추정한 결과는 아직 없다. 상품 목록·자료 기간·결측 여부만 확인했다"
+    - "RQ1: 상장 후 005930·000660 log RV 가 donor 대비 높았지만 주 검정 기각 안 됨 (005930 β 0.57, Holm p 0.11), 음성통제(005935, 반도체 7종목)도 같은 크기로 올라감"
+    - "RQ1: 005930·005935 sup-F 구조변화 시점 2026-05-06 (상장 전). 상장 전후 변동성 수준 차이가 있다 → 상장 더미를 주 모형에 넣은 이유"
+    - "RQ2: 5~7월 국내 시장 전체 변동성 급등, 000660 구조변화 추정 시점 05-22"
+    - "RQ2 ML 확장: 작은 표본에서 ML 이 선형 모형보다 낫지 않았고, 튜닝 이득이 표본 밖으로 이어지지 않음"
+    - "RQ4(A) 결과는 이 사전 지정을 커밋한 뒤에 읽는다 (일부러 읽지 않음)"
+
+  auxiliary:                 # 보고하지만 결론의 근거로 쓰지 않음
+    - "A vs B: 수익률 충격 R_t 의 추가 예측력"
+    - "QLIKE 손실 + Diebold-Mariano (포함 관계에서는 보수적임을 명시). RV 수준 예측은 exp(μ + σ²/2) 로 변환"
+    - "음성통제 005935: 삼성 상품 X 로 같은 C vs B"
+    - "교차 검증: 삼성 상품 X → 000660, SK 상품 X → 005930"
+    - "구간별 손실 차이: 상장~발표 전 / 발표~시행 전 / 시행 후 (기술 통계)"
+    - "R_t 와 X_t 상관, 확장 창 계수 경로, VIF"
+
+  robustness:
+    - "상장 후 106일만 사용 (더미 없이 같은 A·B·C)"
+    - "상장 더미 없이 A·B·C"
+    - "이동 창 60일"
+    - "첫 예측 원점 20·40번째 거래일"
+    - "측정치 rv5_close, rv_pk"
+    - "예측 대상 5일 평균 ln RV"
+    - "규모 지표 aum_won (ETN 제외), 분모를 시가총액으로"
+
+  exploratory:
+    - "보조 ETF 변수: 상품 거래대금 비율, 개인 순매수, 자금흐름(flow_won), AUM 변화"
+    - "ML: Lasso, Elastic Net, RF, XGBoost, LightGBM (같은 확장 창, C 와 비교)"
+
+  changes: []                # 동결 후 변경: {date, item, reason}
