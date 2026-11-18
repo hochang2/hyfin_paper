@@ -1,0 +1,7 @@
+﻿code,period,n,mean_B_minus_C,mean_A_minus_B
+005930,announce_effective,10,-0.01064,0.05182
+005930,listing_announce,6,-0.03108,0.08828
+005930,post_effective,60,0.00242,0.04301
+000660,announce_effective,10,0.04189,0.14108
+000660,listing_announce,6,-0.06877,0.04282
+000660,post_effective,60,-0.02277,0.02249

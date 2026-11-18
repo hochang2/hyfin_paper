@@ -101,6 +101,23 @@ pre_registration:
       improve__none: "현재 기간의 개선이 규제 이후에도 유지되는지 불확실"
       none__improve: "규제 이후 기간에서 새로 개선이 관측됨 (시장 구조 변화 가능성과 우연 가능성을 함께 적는다)"
       none__none: "추가 예측력의 증거 없음"
+    # 2차 가설: 동결 후(2026-11-18) 현재 자료 결과를 보고 추가한 사후 가설. 주 가설(primary_family)과 별개다.
+    # 결론은 주 가설로만 내린다. 2차 가설 결과는 주 결론과 확증 평가 해석표를 바꾸지 않는다.
+    secondary_hypotheses:
+      - id: S1
+        origin: "사후 (4단계 강건성 '분모 시가총액' 사양: 000660 R²oos +13.3% CW p 0.028, 005930 +1.1% p 0.27 을 보고 추가)"
+        variable: "S_t = Σ_i L_i(L_i − 1)·AUM_{i,t−1} / 기초자산 시가총액_t (ETF 보유 비중), X_t = ln(1 + 100·|r_t|·S_t)"
+        rationale: "거래대금 분모는 변동성이 큰 날 함께 커져 S 를 줄이는 내생성이 있다 (결과를 보고 세운 설명)"
+        comparison: "C_mktcap vs B, 다른 설정은 주 가설과 같음"
+        data: "확증 평가 자료(2026-11-02 이후)로만 평가. 현재 자료(~10-30) 결과는 이 가설의 근거로 쓰지 않는다"
+        test: "Clark-West 한쪽, 005930·000660 Holm (주 가설 family 와 따로)"
+      - id: S2
+        origin: "사후 (5단계 탐색: B + IND 가 000660 R²oos +22.4% CW p 0.00006, 005930 +6.4% p 0.011. 하락 수익률 통제 후에도 +9.8% / +3.9% 를 보고 추가)"
+        variable: "IND_t = 100·Σ_i 상품 개인 순매수 금액_{i,t} / 기초자산 거래대금_t (부호 있음, 상장 전 0)"
+        rationale: "리밸런싱 압력이 아니라 ETF 를 통한 개인 투자자 매매가 변동성 예측 정보를 담는다 (결과를 보고 세운 설명)"
+        comparison: "B + IND vs B. 보조로 B + RNEG + IND vs B + RNEG (RNEG = 100·min(r_t, 0))"
+        data: "확증 평가 자료(2026-11-02 이후)로만 평가. 현재 자료 결과는 이 가설의 근거로 쓰지 않는다"
+        test: "Clark-West 한쪽, 005930·000660 Holm (주 가설·S1 과 따로)"
 
   # 이 설계를 정하기 전에 이미 알고 있던 사실 (2026-11-18)
   known_before:
@@ -132,4 +149,10 @@ pre_registration:
     - "보조 ETF 변수: 상품 거래대금 비율, 개인 순매수, 자금흐름(flow_won), AUM 변화"
     - "ML: Lasso, Elastic Net, RF, XGBoost, LightGBM (같은 확장 창, C 와 비교)"
 
-  changes: []                # 동결 후 변경: {date, item, reason}
+  changes:                   # 동결 후 변경: {date, item, reason}
+    - date: 2026-11-18
+      item: "confirmatory.secondary_hypotheses S1 (분모 시가총액) 추가"
+      reason: "사후 가설. 동결 후 현재 자료로 주 검정·해석 근거·강건성을 모두 본 뒤, 4단계 강건성 결과를 보고 추가했다. 주 가설·판정 규칙·주 결론('추가 예측력의 증거 없음')은 바꾸지 않는다. 새 자료로만 평가한다"
+    - date: 2026-11-18
+      item: "confirmatory.secondary_hypotheses S2 (개인 순매수 IND) 추가"
+      reason: "사후 가설. 5단계 탐색(사전 지정 밖 약 24개 검정) 결과를 보고 추가했다. 주 가설·판정 규칙·주 결론은 바꾸지 않는다. 새 자료로만 평가한다"
