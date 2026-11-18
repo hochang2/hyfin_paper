@@ -1,0 +1,79 @@
+# RQ4 사전 설계 (pre-specification). 2026-11-17 추정 전에 고정.
+# 바꾸면 그 사유를 실험 로그 failure_revision 열과 REPORT 11절에 남긴다.
+# 근거: PROJECT_CONTEXT(RQ4), docs/rq2_rq4_progress.md(RQ4 설계 메모), 금융위 보도자료 87353(07-16)·87403(07-24).
+
+cache_dir: data/interim/rq_cache/rq4
+seed: 20261115
+
+# --------------------------------------------------------------------------- 시점
+timeline:            # configs/rq2.yaml timeline 과 같다 (events.yaml 은 공용이라 건드리지 않음)
+  listing: 2026-05-27
+  announce: 2026-07-16          # 즉시: 단일종목 신규상장 중단·광고 금지
+  early_effective_notice: 2026-07-24
+  circuit_breaker: 2026-07-28
+  effective: 2026-07-31         # 기본예탁금 현금 3,000만원 (국내·해외상장 단일종목 레버리지)
+  additional_measures: 2026-08-03
+  original_effective: 2026-08-05
+  premium_rule: 2026-08-19      # 괴리율 관리 강화: 모든 ETF·ETN → 대조군도 노출 (교란 후보)
+  sample_end: 2026-10-30
+
+periods:             # 주 추정대상: post vs listing_base. transition 은 별도 더미 (기준선에 넣지 않음)
+  long_pre: [2025-10-01, 2026-05-26]     # 이벤트 스터디 선행구간, 장기 기준선(강건성)
+  listing_base: [2026-05-27, 2026-07-15]
+  transition: [2026-07-16, 2026-07-30]
+  post: [2026-07-31, 2026-10-30]
+  long_sample_start: 2025-01-02          # 강건성: 장기 표본
+
+# --------------------------------------------------------------------------- 상품 집단
+# A 는 규제 대상(처치 아님, 메커니즘용). B·C 가 H1 처치(비규제 국내 2X ETF). E 가 대조(같은 기초 계열의 1X ETF).
+# ETF·ETN·해외상장은 규제 적용이 다를 수 있어 같은 처치집단으로 묶지 않는다 (ETN 은 별도·탐색).
+groups:
+  A_single_lev_etf: [0192L0, 0192M0, 0193K0, 0193T0, 0193W0, 0194M0, 0194N0, 0194R0, 0194T0, 0195R0, 0195S0,
+                     0197W0, 0198B0, 0198D0]
+  A_single_lev_etn: ["520100", "520101"]
+  A_single_inv: [0193L0, 0197X0]          # 단일종목 인버스 -2X: 예탁금 규제 적용 여부가 원문에 불명확 → 별도
+  B_index_2x: ["122630", "123320", "152500", "252400", "253150", "267770", "253250", "304780"]
+  B_index_2x_sens: ["306950"]             # KRX300 2X: 분류 민감도에서만 추가
+  C_semi_2x: ["494310", "488080", "243880"]
+  C_semi_2x_sens_drop: ["243880"]         # 200IT 2X: 반도체 순수형이 아님 → 제외 민감도
+  D_kosdaq_2x: ["233740", "233160", "278240", "291630", "306530"]
+  D_overseas_2x: ["409820", "418660", "423920", "225040", "465610", "461910"]
+  D_sector_2x: ["462330", "412570", "0080Y0", "0100K0", "0104G0", "243890"]
+  D_inverse_2x: ["252670", "252710", "253160", "253230", "252420"]
+  E_index_1x: ["069500", "069660", "102110", "105190", "148020", "152100", "278530", "293180", "294400",
+               "295040", "310960", "332500", "361580", "448100", "226490", "277630", "237350", "122090"]
+  E_semi_1x: ["091160", "091230", "139260", "266370", "396500", "395270", "455850", "471760", "471990",
+              "475300", "475310", "388420", "474590", "476260", "0005G0", "0093A0"]
+  # 삼성전자·SK하이닉스 집중형 1X (TOP2+, 채권혼합 등): 대조에서 빼고 파급(spillover)·오염 분석용
+  SP_concentrated_1x: ["395160", "469150", "448330", "448630", "0162Z0", "0167A0", "0177N0", "0182R0",
+                       "0182S0", "0183V0", "494220"]
+
+family:              # 상품 → 계열 (계열×일 고정효과 단위)
+  idx: [B_index_2x, B_index_2x_sens, E_index_1x]
+  semi: [C_semi_2x, E_semi_1x]
+
+cohort:              # 고정 코호트 규칙 (사전 지정)
+  balanced_window: [2025-10-01, 2026-10-30]   # 이 구간 모든 거래일에 value 가 있는 상품만 (주 분석)
+  min_pre_median_value_won: 1.0e+8            # 기준선 이전(long_pre) 거래대금 중앙값 1억원 미만 제외 (log 잡음)
+
+# --------------------------------------------------------------------------- 결과변수·모형
+primary_outcome: log_value       # log(거래대금, 원). value<=0 행은 제외하고 개수를 기록
+secondary_outcomes: [asinh_value, log_volume, turnover, flow_aum, share_2x, indiv_net_intensity]
+model:
+  primary: "log_value ~ 2X×Post + 2X×Transition | product FE + family×date FE"
+  weights: equal                  # 상품 동일가중. 합계(달러가중) 버전은 보조
+  estimand: "post(07-31~10-30) vs listing_base(05-27~07-15) 의 2X−1X 로그 거래대금 격차 변화 (계열 내)"
+
+inference:
+  primary: historical_time_placebo   # 접힌 격차 시계열, 겹치지 않는 가짜 창 (RQ2 n_eff 교훈)
+  placebo_range: [2016-01-04, 2026-05-26]   # 가짜 창 전체가 상장일 전에 끝나야 함
+  secondary: [cr1_product, wild_cluster_webb, driscoll_kraay, twoway, date_cluster, randomization]
+  wild_reps: 9999
+  ri_reps: 5000
+
+hypotheses:
+  H1: "β_pooled(B∪C) > 0 이면 지지. 양측 5%, Holm. 방향 예측: +"
+  H2: "β_C − β_B ≠ 0 (방향 사전 가정 없음, PROJECT_CONTEXT 원문 '어디서 더 늘었는가'). 양측 5%, Holm"
+  sesoi_log: 0.0953              # |β| < log(1.10): 경제적으로 작은 효과 (동등성 판단 기준)
+  primary_family: [H1_pooled, H2_diff]   # Holm
+  secondary_family: BH            # 계열별 β, 보조 결과변수, 개인 순매수

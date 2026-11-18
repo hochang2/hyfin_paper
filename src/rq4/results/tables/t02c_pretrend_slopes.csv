@@ -1,0 +1,9 @@
+﻿family,window,n_days,slope_per_month,se_hac,p,level_mean
+idx,long_pre,155,-0.0033,0.0252,0.8955,-1.2621
+idx,listing_base,35,0.0375,0.0476,0.4303,-1.0577
+idx,long_pre+base,190,0.0188,0.0171,0.2724,-1.2245
+idx,base − 직전35일(상장 전),35,,,,0.2421
+semi,long_pre,155,0.194,0.0178,0.0,1.253
+semi,listing_base,35,-0.8902,0.1295,0.0,1.1565
+semi,long_pre+base,190,0.0901,0.0424,0.0336,1.2352
+semi,base − 직전35일(상장 전),35,,,,-0.6432
