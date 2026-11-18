@@ -2,7 +2,7 @@
 import pandas as pd
 import pytest
 
-from src.rq1.main_study import data as D
+from src.rq1.core import data as D
 
 
 @pytest.fixture(scope="module")

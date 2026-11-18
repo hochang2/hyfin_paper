@@ -12,7 +12,7 @@
 | 6b. 두번째 연구 (사후 탐색: IND 집중도·위약·경쟁변수, 마감창 RV) · 커밋 "rq3 두번째 연구" | 완료 | 2026-11-18 |
 | 7. 확증 평가 (11월 이후 자료 40거래일 이상) | 대기 | |
 
-위치: 코드 `src/rq3/main_study/`, 결과 `src/rq3/main_study/results/`, 테스트 `src/rq3/tests/`.
+위치: 코드 `src/rq3/phase1/main_study/`, 결과 `src/rq3/phase1/main_study/results/`, 테스트 `src/rq3/tests/`.
 DB 는 `hyfin.proc` 읽기만 한다. 원자료 로드·캐시·실험 로그는 `src.rq2.core` 를 수정 없이 쓴다.
 
 ## 결정 사항

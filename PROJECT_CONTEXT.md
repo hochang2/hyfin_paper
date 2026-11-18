@@ -137,7 +137,7 @@ docs/           data_spec.md, database_guide.md
 scripts/        임시·일회성 코드 (변환, DB 적재)
 src/
   common/       RQ 공통 코드 (DB 연결, RV 계산, 이벤트 윈도우 등)
-  rq1/ ~ rq4/   RQ별 README, 분석 코드, results/(그림·표), test_*.py
+  rq1/ ~ rq4/   RQ별 README, core/ (공용 코드), phase1/·phase2/ (연구별 코드·results), tests/
 ```
 
 - 분석은 **MotherDuck `hyfin` DB**를 기준으로 한다. 로컬 parquet은 보관과 재적재용이다.

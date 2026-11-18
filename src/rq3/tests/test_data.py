@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.rq3.main_study import data as D
+from src.rq3.core import data as D
 
 LISTING = D.CFG["sample"]["listing"]
 

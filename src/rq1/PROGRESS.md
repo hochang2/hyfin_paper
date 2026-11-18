@@ -8,19 +8,19 @@
 | 단계 | 상태 |
 |---|---|
 | 0. 사전 지정 (`config.yaml` pre_registration) | 완료, 커밋 `rq1 사전 지정` (2026-11-17) |
-| 1. 데이터·기초 그림 | 완료 (2026-11-17): `main_study/data.py`, `run_all --stages data`, 테스트 6개 |
+| 1. 데이터·기초 그림 | 완료 (2026-11-17): `core/data.py`, `run_all --stages data`, 테스트 6개 |
 | 2. 주 분석 (P1, P2) | 완료 (2026-11-17): 두 종목 모두 Holm 보정 순열 p > 0.05 |
 | 3. 판정 (b)(c)·사전 반응 | 완료 (2026-11-17): 두 종목 모두 '상장 효과의 증거 없음' |
 | 4. 보조·강건성 | 완료 (2026-11-17): 결론 유지. 유의한 사양은 모두 음성통제도 같이 유의 |
 | 5. 탐색 (GARCH, 구조변화, 장 마감) | 완료 (2026-11-17): GARCH·sup-F. 장 마감은 A 조율 대기 |
-| 6. REPORT.md | 완료 (2026-11-17): `main_study/results/REPORT.md` |
+| 6. REPORT.md | 완료 (2026-11-17): `phase1/main_study/results/REPORT.md` |
 | 7. 두번째 연구 (사후 탐색) | 완료 (2026-11-18): 마감창−장중 DiD, 모멘텀 기울기, SK스퀘어. REPORT §12. 1차 결론 불변 |
 
 ## 위치
 
 - 설정: `src/rq1/config.yaml` (사건일·통제·사전 지정)
-- 코드: `src/rq1/main_study/` (예정). 반사실 모형·데이터 로드·실험 로그는 `src/rq2/core/` 를 수정하지 않고 import 한다
-- 결과: `src/rq1/main_study/results/{REPORT.md, tables/, figures/, experiment_log.{csv,md}, environment.json}`
+- 코드: `src/rq1/phase1/main_study/` (예정). 반사실 모형·데이터 로드·실험 로그는 `src/rq2/core/` 를 수정하지 않고 import 한다
+- 결과: `src/rq1/phase1/main_study/results/{REPORT.md, tables/, figures/, experiment_log.{csv,md}, environment.json}`
 - 캐시: `data/interim/rq_cache/` (Git 제외)
 
 ## 내린 결정
@@ -49,7 +49,7 @@
   - 삼성전자 − donor 평균이 상장 전 기간 내내 올라가는 추세(2025-10 약 −0.9 → 2026-03 약 0)가 보인다. 조건 (c) 평행추세에 위험 신호. 삼성전자 − 삼성전자우는 평평하다.
 
 ### 2단계 주 분석 (2026-11-17, `run_all --stages primary`)
-- 코드: `main_study/did.py` (TWFE 반복 평균 제거, donor placebo-in-space, Holm, MDE). 모의자료 테스트 6개 통과.
+- 코드: `core/did.py` (TWFE 반복 평균 제거, donor placebo-in-space, Holm, MDE). 모의자료 테스트 6개 통과.
 - P1 005930: β=+0.574 (+78%), 순열 p=0.057 (176 중 10위), Holm 0.114. HAC 모형 p=0.000002 (보고만).
 - P2 000660: β=+0.325 (+38%), 순열 p=0.233, Holm 0.233. HAC p=0.025 (보고만).
 - MDE 0.777 log (+118%). placebo sd 0.278. 두 β 모두 MDE 보다 작다.
