@@ -12,11 +12,20 @@
 
 - 설정·사전 지정: [config.yaml](config.yaml) (커밋 `rq3 사전 지정`)
 - 진행 기록: [PROGRESS.md](PROGRESS.md)
-- 보고서: [main_study/results/REPORT.md](main_study/results/REPORT.md)
+- 보고서: [phase1/main_study/results/REPORT.md](phase1/main_study/results/REPORT.md)
 - 남은 일: 11월 이후 자료로 확증 평가, PROJECT_CONTEXT 7절 결정 기록은 A 와 조율
 
-## 파일
+## 구조 (RQ2 틀을 따름)
 
-- 분석 코드: `main_study/*.py` (원자료 로더는 `src/rq2/core/` 재사용)
-- 결과 그림·표: `main_study/results/`
-- 테스트: `tests/test_*.py`
+```
+src/rq3/
+  config.yaml   사전 지정 설정
+  PROGRESS.md   진행 기록
+  core/         공용 라이브러리: data.py (패널·설계 행렬), forecast.py (표본외 예측·검정)
+  tests/        core 검증 (데이터 점검, 예측·검정 모의자료)
+  phase1/       Phase 1
+    main_study/   README.md, run_all.py, *.py, results/{REPORT.md, tables/, figures/, experiment_log.*, environment.json}
+  phase2/       Phase 2 (예정)
+```
+
+- 원자료 로더는 `src/rq2/core/` 를 재사용한다.

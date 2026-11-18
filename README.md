@@ -27,7 +27,7 @@ docs/           data_spec.md (데이터 명세), database_guide.md (DB 사용법
 scripts/        임시·일회성 코드 (변환, DB 적재 등)
 src/
   common/       RQ 공통 코드: db.py (DB 연결), processing/ (raw → proc 전처리)
-  rq1/ ~ rq4/   RQ별 분석 코드, results/ (그림·표), test_*.py
+  rq1/ ~ rq4/   RQ별 README, core/ (공용 코드), phase1/·phase2/ (연구별 코드·results), tests/
 ```
 
 - 분석 데이터는 **MotherDuck `hyfin` DB가 기준**이다. `raw` = 원본 백업, `proc` = 분석에 쓰는 것 전부. **분석 코드는 `proc` 만 읽는다.** `proc` 테이블은 언제든 `src/` 코드로 다시 만들 수 있어야 한다.
