@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from src.rq3.main_study import forecast as F
+from src.rq3.core import forecast as F
 
 
 def _sim(beta_x=0.0, n=240, seed=0):

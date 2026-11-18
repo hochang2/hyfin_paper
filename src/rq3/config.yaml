@@ -156,3 +156,6 @@ pre_registration:
     - date: 2026-11-18
       item: "confirmatory.secondary_hypotheses S2 (개인 순매수 IND) 추가"
       reason: "사후 가설. 5단계 탐색(사전 지정 밖 약 24개 검정) 결과를 보고 추가했다. 주 가설·판정 규칙·주 결론은 바꾸지 않는다. 새 자료로만 평가한다"
+    - date: 2026-11-18
+      item: "두번째 연구 사후 탐색 추가 (run_all --stages followup): IND 날짜 집중도, IND 블록 위약, 경쟁 변수(ln ATM IV, 현물 개인·외국인 순매수) 통제, 마감창 RV 예측"
+      reason: "사용자 요청. 모두 탐색이며 주 결론·S1·S2 정의를 바꾸지 않는다. S2 확증 평가 때 경쟁 변수 통제 사양을 함께 보고한다"

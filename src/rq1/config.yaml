@@ -112,4 +112,7 @@ pre_registration:
     - "구조변화 검정 (Chow 상장일, sup-F / Bai-Perron)"
     - "장 마감 30분 RV (리밸런싱 경로) — A 와 역할 조율 후"
 
-  changes: []              # 동결 후 변경: {date, item, reason}
+  changes:                 # 동결 후 변경: {date, item, reason}
+    - date: 2026-11-18
+      item: "두번째 연구 사후 탐색 추가 (run_all --stages followup): 마감창(14:50~15:20) − 장중창(09:30~14:50) ln RV DiD, 일중 모멘텀 기울기, SK스퀘어(402340) 음성통제, 상장 전 가짜 처치 창 MDE"
+      reason: "사용자 요청. 1차 결과를 모두 본 뒤 정한 사후 분석이다. primary_family·decision_rule·1차 주 결론을 바꾸지 않는다. 탐색 항목 '장 마감 30분 RV' 는 A 와 역할 조율 대상이었으므로 A 에게 알린다"

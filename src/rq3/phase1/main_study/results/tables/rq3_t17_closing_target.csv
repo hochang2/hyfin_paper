@@ -1,0 +1,9 @@
+﻿code,target,compare,n,r2_oos,cw_t,cw_p
+005930,yc_next,B_close + C (X) vs B_close,76,0.01029,0.8889,0.18703
+005930,yc_next,B_close + IND vs B_close,76,0.02725,2.1756,0.01479
+005930,yca_next,B_close + C (X) vs B_close,76,0.04945,2.19955,0.01392
+005930,yca_next,B_close + IND vs B_close,76,0.01345,1.32842,0.09202
+000660,yc_next,B_close + C (X) vs B_close,76,-0.04296,-1.15316,0.87558
+000660,yc_next,B_close + IND vs B_close,76,0.04109,2.52461,0.00579
+000660,yca_next,B_close + C (X) vs B_close,76,-0.02419,-0.81614,0.79279
+000660,yca_next,B_close + IND vs B_close,76,0.06251,2.89833,0.00188
