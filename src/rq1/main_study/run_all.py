@@ -338,8 +338,69 @@ def stage_exploratory():
                 interpretation="잔차 자기상관을 무시해 과대 기각 경향. 날짜 위치만 참고한다.", seed=SEED)
 
 
+def stage_followup():
+    """두번째 연구 (사후 탐색). 1차 주 결론을 바꾸지 않는다. 모듈: followup.py"""
+    from src.rq1.main_study import followup as FU
+    donors = D.groups()["donor"]
+    tag = "탐색적 (두번째 연구, 사후). 1차 주 결론 불변"
+
+    # (1)(3) 결과변수별 DiD family: 1차 결과변수(rv5, SK스퀘어 포함) / 마감창−장중 / 마감창 / 장중창
+    fam, nulls = [], {}
+    for kind in ["rv5", "diff", "rvc", "rvi"]:
+        pn = FU.panel(kind)
+        t, null = FU.did_family(pn, donors, seed=SEED)
+        t.insert(0, "outcome", kind)
+        fam.append(t)
+        nulls[kind] = null
+    fam = pd.concat(fam)
+    for kind in fam.outcome.unique():
+        m = (fam.outcome == kind) & fam.unit.isin(D.CFG["treated"])
+        hp = M.holm(dict(zip(fam.loc[m, "unit"], fam.loc[m, "perm_p"])))
+        fam.loc[m, "holm_p"] = fam.loc[m, "unit"].map(hp)
+    fam.round(5).to_csv(TAB / "rq1_f1_did_by_outcome.csv", index=False, encoding="utf-8-sig")
+    pd.DataFrame(nulls).to_csv(TAB / "rq1_f1b_placebo_by_outcome.csv", encoding="utf-8-sig")
+
+    # (4) 상장 전 가짜 처치 창 MDE
+    mde = pd.concat([FU.pseudo_mde(FU.panel(k), donors).assign(outcome=k) for k in ["rv5", "diff"]])
+    mde.round(4).to_csv(TAB / "rq1_f2_pseudo_mde.csv", index=False, encoding="utf-8-sig")
+
+    # (2) 일중 모멘텀 기울기
+    mom = []
+    for auc in [False, True]:
+        t, _ = FU.momentum_test(FU.momentum_frame(auction=auc), donors)
+        mom.append(t.assign(end="종가 단일가" if auc else "정규장 종가"))
+    mom = pd.concat(mom)
+    mom.round(5).to_csv(TAB / "rq1_f3_momentum.csv", index=False, encoding="utf-8-sig")
+
+    pc = FU.pre_corr()
+    pc.round(4).to_csv(TAB / "rq1_f4_pre_corr.csv", index=False, encoding="utf-8-sig")
+    P.followup_diff(FU.panel("diff"), D.CFG, FIG / "rq1_f_close_minus_mid.png")
+
+    for r in fam.itertuples():
+        LOG.add(id=f"RQ1-F1-{zlib.crc32(f'{r.outcome}{r.unit}'.encode()):08x}", rq="RQ1", kind="extension",
+                purpose=f"결과변수 {r.outcome} DiD: {r.unit}", data="2025-10-01~2026-07-15, donor main 175",
+                model="TWFE DiD + donor 순열", settings={"outcome": r.outcome, "null": r.null},
+                result=(f"β={r.beta:+.3f}, 순열 p={r.perm_p:.3f}" + ("" if pd.isna(r.holm_p) else f", Holm {r.holm_p:.3f}")
+                        + f", MDE={r.mde_log:.3f}"), interpretation=tag, seed=SEED)
+    for k, g in mde.groupby("outcome"):
+        LOG.add(id=f"RQ1-F2-{k}", rq="RQ1", kind="diagnostic", purpose=f"상장 전 가짜 처치 창 MDE ({k})",
+                data="상장 전 155일, 35일 창 7개", model="donor placebo sd × 2.8",
+                result=f"MDE {g.mde_log.min():.3f} ~ {g.mde_log.max():.3f} (중앙 {g.mde_log.median():.3f})",
+                interpretation=tag, seed=SEED)
+    for r in mom.itertuples():
+        LOG.add(id=f"RQ1-F3-{zlib.crc32(f'{r.end}{r.code}'.encode()):08x}", rq="RQ1", kind="extension",
+                purpose=f"일중 모멘텀 기울기 변화 ({r.code}, 끝={r.end})", data="2025-10-01~2026-07-15",
+                model="r_last ~ r_rest + r_rest·Post + Post (HAC 5), donor 대비 순열",
+                result=(f"상장 전 기울기 {r.b_pre:+.3f}, 변화 c={r.c_change:+.3f} (HAC p {r.p_hac:.3f}), "
+                        f"donor 평균 대비 {r.stat_vs_donor_mean:+.3f}, 순열 p={r.perm_p:.3f}"),
+                interpretation=tag, seed=SEED)
+    LOG.add(id="RQ1-F4-PRECORR", rq="RQ1", kind="diagnostic", purpose="같은 기업 대조 후보의 상장 전 ln rv5 상관",
+            data="2025-10-01~2026-05-26", model="Pearson",
+            result="; ".join(f"{r.pair} {r.corr:.3f}" for r in pc.itertuples()), interpretation=tag, seed=SEED)
+
+
 STAGES = {"data": stage_data, "primary": stage_primary, "judgment": stage_judgment, "robustness": stage_robustness,
-          "exploratory": stage_exploratory}
+          "exploratory": stage_exploratory, "followup": stage_followup}
 
 
 def write_env():

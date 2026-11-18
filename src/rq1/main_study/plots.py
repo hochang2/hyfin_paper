@@ -1,4 +1,4 @@
-"""RQ1 그림. 스타일은 RQ2(src/rq2/main_study/plots.py)와 같게 맞춘다."""
+"""RQ1 그림. 스타일은 RQ2(src/rq2/phase1/main_study/plots.py)와 같게 맞춘다."""
 from __future__ import annotations
 
 import matplotlib
@@ -135,5 +135,28 @@ def supf_curves(F: pd.DataFrame, cfg: dict, out_png):
     ax.set_ylabel("F (평균 이동)")
     ax.set_title("RQ1 탐색: 변화 시점별 F 통계량 (log RV 차이)", loc="left", fontsize=11)
     ax.legend(fontsize=7, frameon=False, ncol=2, loc="upper left")
+    fig.savefig(out_png)
+    plt.close(fig)
+
+
+def followup_diff(df: pd.DataFrame, cfg: dict, out_png, smooth: int = 5):
+    """두번째 연구: 마감창 − 장중 ln RV. 처리·음성통제 종목에서 donor 평균을 뺀 값 (5일 이동평균).
+    추정 결과가 아니라 DiD 의 원자료 차이다."""
+    tl = cfg["timeline"]
+    don = df[df.role == "donor"].groupby("date").y.mean()
+    w = df.pivot(index="date", columns="code", values="y")
+    sm_ = lambda s: s.rolling(smooth, min_periods=1).mean()  # noqa: E731
+    fig, ax = plt.subplots(figsize=(10, 4))
+    for code, col, lab in [("005930", C["blue"], "삼성전자"), ("000660", C["orange"], "SK하이닉스"),
+                           ("005935", C["ink2"], "삼성전자우"), ("402340", C["violet"], "SK스퀘어")]:
+        if code in w:
+            ax.plot(w.index, sm_(w[code] - don), color=col, lw=1.3 if code in ("005930", "000660") else 0.9,
+                    ls="-" if code in ("005930", "000660") else "--", label=f"{lab} − donor 평균")
+    ax.axhline(0, color=C["ink"], lw=0.7)
+    _listing(ax, tl, w.index.max())
+    ax.set_xlim(w.index.min(), w.index.max())
+    ax.set_ylabel("ln RV(마감창) − ln RV(장중창), donor 대비")
+    ax.legend(fontsize=8, frameon=False, ncol=2)
+    ax.set_title("마감 30분 상대 변동성 (5일 이동평균)", fontsize=11, loc="left")
     fig.savefig(out_png)
     plt.close(fig)
