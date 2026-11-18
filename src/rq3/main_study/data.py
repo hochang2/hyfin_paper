@@ -167,6 +167,44 @@ def aux_vars(underlying: str) -> pd.DataFrame:
     return out.reindex(days).fillna(0.0)
 
 
+CLOSE_WIN = (1450, 1515)     # 마감창: 14:50~15:20 칸 (칸 시각 = 시작 시각, 마지막 칸 15:15~15:20)
+MID_WIN = (930, 1445)        # 장중창: 09:30~14:50
+
+
+def window_rv(codes: tuple[str, ...] = ("005930", "000660", "005935")) -> pd.DataFrame:
+    """5분 칸 수익률로 만든 구간 RV. 열: date, code, rvc(마감창), rvi(장중창), rvc_auc(마감창 + 종가 단일가 점프²).
+
+    `proc.intraday_5m` 의 ret 는 직전 칸 종가 대비 log 수익률이다. 종가 단일가는 칸에 없어서
+    rv_daily 의 p_close_auction / p_close_reg 로 더한다 (없는 날은 0).
+    """
+    key = "_".join(sorted(codes))
+    clist = ",".join(f"'{c}'" for c in codes)
+    df = rq2data._cached(f"rq3_window_rv_{key}", f"""
+        SELECT date, code,
+               sum(CASE WHEN hhmm BETWEEN {CLOSE_WIN[0]} AND {CLOSE_WIN[1]} THEN ret*ret END) AS rvc,
+               sum(CASE WHEN hhmm BETWEEN {MID_WIN[0]} AND {MID_WIN[1]} THEN ret*ret END) AS rvi
+        FROM hyfin.proc.intraday_5m WHERE code IN ({clist}) GROUP BY date, code""")
+    df["date"] = pd.to_datetime(df["date"])
+    rv = rq2data.raw_rv()
+    a = rv[rv.code.isin(codes)][["date", "code", "rv5", "rv5_close"]]
+    df = df.merge(a, on=["date", "code"], how="left")
+    df["rvc_auc"] = df.rvc + (df.rv5_close - df.rv5).clip(lower=0)
+    return df.drop(columns=["rv5", "rv5_close"]).sort_values(["code", "date"]).reset_index(drop=True)
+
+
+def spot_vars(code: str) -> pd.DataFrame:
+    """경쟁 변수 (t 일 장 마감 정보): ln ATM 내재변동성, 현물 개인·외국인 순매수 / 거래대금 (%)."""
+    f = rq2data.CACHE / f"rq3_spot_{code}.parquet"
+    if not f.exists():
+        from src.common.db import sql
+        sql(f"""SELECT date, opt_iv_atm, indiv_amt, foreign_amt, value FROM hyfin.proc.stock_daily
+                WHERE code = '{code}'""").to_parquet(f)
+    m = pd.read_parquet(f)
+    m = m.assign(date=pd.to_datetime(m.date)).set_index("date").reindex(trading_days())
+    return pd.DataFrame({"LIV": np.log(m.opt_iv_atm), "SIND": 100 * m.indiv_amt / m.value,
+                         "SFOR": 100 * m.foreign_amt / m.value})
+
+
 def first_origin() -> pd.Timestamp:
     days = trading_days()
     return days[days >= CFG["sample"]["listing"]][FIRST_ORIGIN_DAY - 1]

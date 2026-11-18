@@ -417,8 +417,135 @@ def stage_exploratory():
                 interpretation="탐색적 (주 결론 불변)", seed=SEED)
 
 
+SHOCK_WIN = ("2026-07-24", "2026-08-05")   # 조기시행 예고~시행 직후 급변기
+
+
+def followup_design(c: str) -> pd.DataFrame:
+    """두번째 연구용 설계 행렬: 기본 + 보조 ETF 변수 + 경쟁 변수 + RNEG + 마감창 RV."""
+    d = D.design(c).join(D.aux_vars(c)).join(D.spot_vars(c))
+    d["RNEG"] = 100 * d.r.clip(upper=0)
+    w = D.window_rv()
+    w = w[w.code == c].set_index("date").reindex(D.trading_days())
+    for col, name in [("rvc", "c"), ("rvc_auc", "ca")]:
+        v = w[col].where(w[col] > 0)
+        d[f"lrv{name}"] = np.log(v).reindex(d.index)
+        d[f"y{name}_next"] = np.log(v).shift(-1).reindex(d.index)
+    return d
+
+
+def _cw_row(d, small, big, fo, **okw):
+    fs, fb = F.oos(d, small, fo, **okw), F.oos(d, big, fo, **okw)
+    cw = F.clark_west(fs.y, fs.yhat, fb.yhat)
+    return cw, fs, fb
+
+
+def stage_followup():
+    """두번째 연구 (사후 탐색, 2026-11-18 이후 사용자 요청). 주 결론·S1·S2 를 바꾸지 않는다.
+    (1) IND 신호의 날짜 집중도 (2) IND 블록 위약 (3) 경쟁 변수 통제 (4) 예측 대상 = 마감창 RV."""
+    rng = np.random.default_rng(SEED + 1)
+    fo = D.first_origin()
+    B = F.MODELS["B"]
+    BI = B + ["IND"]
+    s0, s1 = map(pd.Timestamp, SHOCK_WIN)
+    conc, loo_tab, plc_rows, plc_null, comp, clo = [], [], [], {}, [], []
+    for c in CODES:
+        d = followup_design(c)
+        # ---- (1) 날짜 집중도
+        cw, fs, fb = _cw_row(d, B, BI, fo)
+        contrib = (fs.y - fs.yhat) ** 2 - (fb.y - fb.yhat) ** 2        # 양수 = IND 모형이 그날 더 잘 맞힘
+        mse_s = ((fs.y - fs.yhat) ** 2)
+        tot = contrib.sum()
+        conc.append({"code": c, "case": "기준 (B+IND vs B)", "n": cw["n"], "r2_oos": cw["r2_oos"],
+                     "cw_p": cw["p_one_sided"]})
+        m = (fs.index >= s0) & (fs.index <= s1)
+        r2 = contrib[~m].sum() / mse_s[~m].sum()
+        conc.append({"code": c, "case": f"평가에서 {SHOCK_WIN[0]}~{SHOCK_WIN[1]} 제외", "n": int((~m).sum()),
+                     "r2_oos": r2, "cw_p": F.clark_west(fs.y[~m], fs.yhat[~m], fb.yhat[~m])["p_one_sided"]})
+        dd = d[(d.index < s0) | (d.index > s1)]
+        cw2, _, _ = _cw_row(dd, B, BI, fo)
+        conc.append({"code": c, "case": "학습·평가 모두에서 급변기 제외", "n": cw2["n"], "r2_oos": cw2["r2_oos"],
+                     "cw_p": cw2["p_one_sided"]})
+        order = contrib.sort_values(ascending=False)
+        for k in (1, 3, 5):
+            keep = ~fs.index.isin(order.index[:k])
+            conc.append({"code": c, "case": f"기여 상위 {k}일 제외", "n": int(keep.sum()),
+                         "r2_oos": contrib[keep].sum() / mse_s[keep].sum(),
+                         "cw_p": F.clark_west(fs.y[keep], fs.yhat[keep], fb.yhat[keep])["p_one_sided"]})
+        loo = [(contrib.sum() - contrib[t]) / (mse_s.sum() - mse_s[t]) for t in fs.index]
+        conc.append({"code": c, "case": "하루씩 제외 (76번) 최솟값", "n": cw["n"] - 1, "r2_oos": min(loo), "cw_p": np.nan})
+        conc.append({"code": c, "case": "하루씩 제외 (76번) 최댓값", "n": cw["n"] - 1, "r2_oos": max(loo), "cw_p": np.nan})
+        top = order.head(5)
+        loo_tab.append(pd.DataFrame({"code": c, "date": top.index, "contrib": top.values,
+                                     "share_of_total": top.values / tot, "IND": d.loc[top.index, "IND"].values,
+                                     "r": d.loc[top.index, "r"].values}))
+        # ---- (2) IND 블록 위약 (X 위약과 같은 방식: 규제 구간 안 5일 블록)
+        post = d.index[d.D == 1]
+        grp = D.period_of(post).to_numpy()
+        null = np.empty(N_PLACEBO)
+        for j in range(N_PLACEBO):
+            dj = d.copy()
+            dj.loc[post, "IND"] = F.block_shuffle(d.loc[post, "IND"], grp, BLOCK, rng).to_numpy()
+            null[j] = F.clark_west(fs.y, fs.yhat, F.oos(dj, BI, fo).yhat)["cw_t"]
+        plc_null[c] = null
+        plc_rows.append({"code": c, "cw_t_real": cw["cw_t"], "null_mean": null.mean(), "null_q95": np.quantile(null, .95),
+                         "rank_p": (1 + (null >= cw["cw_t"]).sum()) / (1 + N_PLACEBO)})
+        # ---- (3) 경쟁 변수 통제
+        K = B + ["LIV", "SIND", "SFOR"]
+        for lab, small, big in [("B + 경쟁변수 vs B", B, K),
+                                ("B + 경쟁변수 + IND vs B + 경쟁변수", K, K + ["IND"]),
+                                ("B + 경쟁변수 + RNEG + IND vs B + 경쟁변수 + RNEG", K + ["RNEG"], K + ["RNEG", "IND"])]:
+            cw3, _, _ = _cw_row(d, small, big, fo)
+            comp.append({"code": c, "compare": lab, "n": cw3["n"], "r2_oos": cw3["r2_oos"], "cw_t": cw3["cw_t"],
+                         "cw_p": cw3["p_one_sided"]})
+        post_d = d[d.D == 1]
+        comp.append({"code": c, "compare": "참고: 상장 후 corr(IND, SIND / SFOR / LIV)", "n": len(post_d),
+                     "r2_oos": np.nan, "cw_t": np.nan, "cw_p": np.nan,
+                     "corr": f"{post_d.IND.corr(post_d.SIND):.3f} / {post_d.IND.corr(post_d.SFOR):.3f} / "
+                             f"{post_d.IND.corr(post_d.LIV):.3f}"})
+        # ---- (4) 예측 대상 = 다음 날 마감창 ln RV
+        for tgt, lag in [("yc_next", "lrvc"), ("yca_next", "lrvca")]:
+            Bc = B + [lag]
+            for lab, big in [("C (X)", Bc + ["X"]), ("IND", Bc + ["IND"])]:
+                dc = d.dropna(subset=[lag])
+                cw4, _, _ = _cw_row(dc, Bc, big, fo, target=tgt)
+                clo.append({"code": c, "target": tgt, "compare": f"B_close + {lab} vs B_close", "n": cw4["n"],
+                            "r2_oos": cw4["r2_oos"], "cw_t": cw4["cw_t"], "cw_p": cw4["p_one_sided"]})
+    conc, comp, clo = pd.DataFrame(conc), pd.DataFrame(comp), pd.DataFrame(clo)
+    plc = pd.DataFrame(plc_rows)
+    conc.round(5).to_csv(TAB / "rq3_t14_ind_concentration.csv", index=False, encoding="utf-8-sig")
+    pd.concat(loo_tab).round(5).to_csv(TAB / "rq3_t14b_ind_top_days.csv", index=False, encoding="utf-8-sig")
+    plc.round(4).to_csv(TAB / "rq3_t15_ind_placebo.csv", index=False, encoding="utf-8-sig")
+    comp.round(5).to_csv(TAB / "rq3_t16_competitors.csv", index=False, encoding="utf-8-sig")
+    clo.round(5).to_csv(TAB / "rq3_t17_closing_target.csv", index=False, encoding="utf-8-sig")
+    P.placebo_hist(plc_null, plc.set_index("code").cw_t_real.to_dict(), FIG / "rq3_f06_ind_placebo.png",
+                   title="IND 위약: 개인 순매수를 규제 구간 안에서 5일 블록으로 섞은 1000번", xlabel="Clark-West t (B+IND vs B)")
+
+    tag = "탐색적 (두번째 연구, 사후). 주 결론·S2 근거 아님"
+    for r in conc.itertuples():
+        LOG.add(id=f"RQ3-F1-{zlib.crc32(f'{r.code}{r.case}'.encode()):08x}", rq="RQ3", kind="diagnostic",
+                purpose=f"IND 날짜 집중도: {r.case} ({r.code})", data=f"표본외 {r.n}개", model="OLS 확장 창",
+                result=f"R2oos={r.r2_oos:+.4f}" + ("" if pd.isna(r.cw_p) else f", CW p={r.cw_p:.4f}"),
+                interpretation=tag, seed=SEED)
+    for r in plc.itertuples():
+        LOG.add(id=f"RQ3-F2-{r.code}", rq="RQ3", kind="placebo", purpose=f"IND 블록 위약 ({r.code})",
+                data="표본외 76개", model="IND 를 규제 구간 안 5일 블록으로 섞음",
+                settings={"n": N_PLACEBO, "block": BLOCK, "seed": SEED + 1},
+                result=f"실제 CW t={r.cw_t_real:.3f}, 위약 95%={r.null_q95:.3f}, rank p={r.rank_p:.4f}",
+                interpretation=tag, seed=SEED + 1)
+    for r in comp[comp.cw_p.notna()].itertuples():
+        LOG.add(id=f"RQ3-F3-{zlib.crc32(f'{r.code}{r.compare}'.encode()):08x}", rq="RQ3", kind="extension",
+                purpose=f"경쟁 변수 통제: {r.compare} ({r.code})", data=f"표본외 {r.n}개", model="OLS 확장 창",
+                settings={"competitors": ["LIV=ln ATM IV", "SIND=현물 개인 순매수/거래대금", "SFOR=현물 외국인 순매수/거래대금"]},
+                result=f"R2oos={r.r2_oos:+.4f}, CW t={r.cw_t:.3f}, p={r.cw_p:.4f}", interpretation=tag, seed=SEED)
+    for r in clo.itertuples():
+        LOG.add(id=f"RQ3-F4-{zlib.crc32(f'{r.code}{r.target}{r.compare}'.encode()):08x}", rq="RQ3", kind="extension",
+                purpose=f"마감창 RV 예측: {r.compare} ({r.code}, {r.target})", data=f"표본외 {r.n}개",
+                model="OLS 확장 창", settings={"close_window": "14:50~15:20", "auction": r.target == "yca_next"},
+                result=f"R2oos={r.r2_oos:+.4f}, CW t={r.cw_t:.3f}, p={r.cw_p:.4f}", interpretation=tag, seed=SEED)
+
+
 STAGES = {"data": stage_data, "primary": stage_primary, "judgment": stage_judgment,
-          "robustness": stage_robustness, "exploratory": stage_exploratory}
+          "robustness": stage_robustness, "exploratory": stage_exploratory, "followup": stage_followup}
 
 
 def write_env():

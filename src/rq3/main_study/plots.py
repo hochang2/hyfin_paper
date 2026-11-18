@@ -51,7 +51,8 @@ def cum_loss_diff(oos: dict[str, dict[str, pd.DataFrame]], tl: dict, out_png):
     plt.close(fig)
 
 
-def placebo_hist(null: dict, real: dict, out_png):
+def placebo_hist(null: dict, real: dict, out_png, title: str = "위약: 규모 비율 S 를 규제 구간 안에서 5일 블록으로 섞은 1000번",
+                 xlabel: str = "Clark-West t (C vs B)"):
     """구간 내 블록 위약의 Clark-West t 분포와 실제 값."""
     codes = list(null)
     fig, axes = plt.subplots(1, len(codes), figsize=(5.5 * len(codes), 3.4))
@@ -60,9 +61,9 @@ def placebo_hist(null: dict, real: dict, out_png):
         ax.axvline(real[c], color=C["orange"], lw=1.6, label=f"실제 {real[c]:.2f}")
         ax.axvline(pd.Series(null[c]).quantile(0.95), color=C["ink2"], ls=":", lw=1, label="위약 95%")
         ax.set_title(f"{NAMES.get(c, c)} ({c})", fontsize=11, loc="left")
-        ax.set_xlabel("Clark-West t (C vs B)")
+        ax.set_xlabel(xlabel)
         ax.legend(fontsize=8, frameon=False)
-    fig.suptitle("위약: 규모 비율 S 를 규제 구간 안에서 5일 블록으로 섞은 1000번", fontsize=12, x=0.01, y=1.04, ha="left")
+    fig.suptitle(title, fontsize=12, x=0.01, y=1.04, ha="left")
     fig.savefig(out_png)
     plt.close(fig)
 
